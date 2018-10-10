@@ -1,6 +1,6 @@
 # ATC-8
 
-**ATC-8** (Advanced Toy 8-bit Computer) is a virtual machine designed to mimic a non-existant video game console. Unlike PICO-8, ATC-8 has higher specs and it's designed as an video game console emulator. That means that an user can create a game for it using only available assembly language. 
+**ATC-8** (Advanced Toy 8-bit Computer) is a virtual machine designed to mimic a non-existing video game console. Unlike PICO-8, ATC-8 has higher specs and it's designed as an video game console emulator. That means that an user can create a game for it using only available assembly language. 
 
 ## Specifications
 
