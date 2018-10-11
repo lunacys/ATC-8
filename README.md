@@ -17,6 +17,7 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
  - **Input:** Up to 4 8-button controllers
  - **Sprites:** Single bank of 128 8x8 sprites
  - **Map:** 8-bit cells, size of map is unlimited
+ - **Internal memory:** 64KB
 
 ## Project structure
 
@@ -25,6 +26,7 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
  - `ATC-8.Common` - library with all basic functions shared between all modules
  - `ATC-8.Cpu` - **CPU** module implementation
  - `ATC-8.Ram` - **RAM** module implementation
+ - `ATC-8.InternalMemory` - **Internal memory** module implementation
  - `ATC-8.Display` - **Display**, **Colors**, **Sprites** and **Map** modules implementation
  - `ATC-8.Cartridge` - **Cartridge reader** module implementation
  - `ATC-8.Sound` - **Sound** module implementation (sound synthesis & output)
