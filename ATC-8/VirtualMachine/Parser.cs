@@ -15,17 +15,32 @@ namespace ATC8.VirtualMachine
                 var content = sr.ReadToEnd();
                 var lines = content.Split('\n');
 
-                foreach (var line in lines)
+                for (var i = 0; i < lines.Length; i++)
                 {
-                    var inst = line.Split(' ');
-                    var type = Enum.Parse<Instructions>(inst[0]);
-                    bytecode.Add((byte)type);
-                    switch (type)
+                    var line = lines[i];
+                    var l = line.TrimStart(' ', '\t');
+                    // Skip empty and comment lines
+                    if (string.IsNullOrWhiteSpace(l) || l.StartsWith('#'))
+                        continue;
+
+                    var inst = l.Split(' ');
+
+                    if (!Enum.TryParse<Instructions>(inst[0], true, out var type))
+                        throw new Exception($"Invalid instruction at line {i + 1}.");
+
+                    bytecode.Add((byte) type);
+
+                    if (type == Instructions.Directive)
+                    { 
+                        var lit = byte.Parse(inst[1]);
+                        bytecode.Add(lit);
+                    }
+                    else if (type == Instructions.Move)
                     {
-                        case Instructions.Literal:
-                            var lit = byte.Parse(inst[1]);
-                            bytecode.Add(lit);
-                            break;
+                        var lit = byte.Parse(inst[2]);
+                        var reg = byte.Parse(inst[1]);
+                        bytecode.Add(lit);
+                        bytecode.Add(reg);
                     }
                 }
             }
