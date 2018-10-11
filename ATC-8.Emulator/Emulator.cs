@@ -2,14 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace ATC8.Gui
+namespace ATC8.Emulator
 {
-    public class GameRoot : Game
+    public class Emulator : Game
     {
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        GraphicsDeviceManager _graphics;
+        SpriteBatch _spriteBatch;
 
-        public GameRoot()
+        public Emulator()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";

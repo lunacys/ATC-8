@@ -8,7 +8,17 @@ namespace ATC8
         static void Main(string[] args)
         {
             var parser = new Parser();
-            var bytecode = parser.ParseFile("test.txt");
+            byte[] bytecode;
+            try
+            {
+                bytecode = parser.ParseFile("test.txt");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            
             var vm = new VirtualMachine.VirtualMachine();
             vm.Interpret(bytecode);
 

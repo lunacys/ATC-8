@@ -26,7 +26,7 @@ namespace ATC8.VirtualMachine
                     var inst = l.Split(' ');
 
                     if (!Enum.TryParse<Instructions>(inst[0], true, out var type))
-                        throw new Exception($"Invalid instruction at line {i + 1}.");
+                        throw new Exception($"Invalid instruction '{inst[0]}' at line {i + 1}.");
 
                     bytecode.Add((byte) type);
 

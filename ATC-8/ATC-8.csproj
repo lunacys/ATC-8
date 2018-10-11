@@ -6,4 +6,16 @@
     <RootNamespace>ATC8</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\" />
+    <Folder Include="Cpu\" />
+    <Folder Include="InternalMemory\" />
+    <Folder Include="Bus\" />
+    <Folder Include="Display\" />
+    <Folder Include="Cartridge\" />
+    <Folder Include="Input\" />
+    <Folder Include="Sound\" />
+    <Folder Include="Ram\" />
+  </ItemGroup>
+
 </Project>
