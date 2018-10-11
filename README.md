@@ -22,7 +22,7 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 
 **ATC-8** has the following project structure:
 
- - `ATC-8.Library` - library with all basic functions shared between all modules
+ - `ATC-8.Common` - library with all basic functions shared between all modules
  - `ATC-8.Cpu` - **CPU** module implementation
  - `ATC-8.Ram` - **RAM** module implementation
  - `ATC-8.Display` - **Display**, **Colors**, **Sprites** and **Map** modules implementation
