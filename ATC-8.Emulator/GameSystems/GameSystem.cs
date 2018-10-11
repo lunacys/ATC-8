@@ -7,7 +7,7 @@ namespace ATC8.Emulator.GameSystems
     {
         public event EventHandler OnReset;
 
-        public IGameSystemManager GameSystemManager { get; set; }
+        public IGameSystemManager GameSystemManager { get; internal set; }
 
         public bool IsActive { get; set; }
 
