@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using ATC8.Emulator.Screens;
+using lunge.Library.GameTimers;
+using lunge.Library.Screens;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -8,6 +12,8 @@ namespace ATC8.Emulator
     {
         GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
+        private ScreenGameComponent _screenComponent;
+        private StartupScreen _startupScreen;
 
         public Emulator()
         {
@@ -19,6 +25,11 @@ namespace ATC8.Emulator
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _startupScreen = new StartupScreen(this);
+            _screenComponent = new ScreenGameComponent(this);
+            _screenComponent.Register(_startupScreen);
+
+            Components.Add(_screenComponent);
 
             base.Initialize();
         }
@@ -36,6 +47,7 @@ namespace ATC8.Emulator
                 Exit();
 
             // TODO: Add your update logic here
+            GameTimerManager.Update(gameTime);
 
             base.Update(gameTime);
         }
