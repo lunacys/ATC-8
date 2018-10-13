@@ -25,3 +25,10 @@
 /processorParam:TextureFormat=Color
 /build:Images/Test.png
 
+#begin Fonts/Terminal.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Terminal.spritefont
+
