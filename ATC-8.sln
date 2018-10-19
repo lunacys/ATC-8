@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATC-8", "ATC-8\ATC-8.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATC-8.Emulator", "ATC-8.Emulator\ATC-8.Emulator.csproj", "{A6407EAD-2C25-4836-A2B6-8213909DD51F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lunge.Library", "..\lunge\lunge.Library\lunge.Library.csproj", "{08AA086F-D0A2-410D-95A7-29D68AB72B72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lunge.Library", "lunge\lunge.Library\lunge.Library.csproj", "{08AA086F-D0A2-410D-95A7-29D68AB72B72}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameEngine", "GameEngine", "{4C046804-EA59-49A7-BBD4-B496DDB4D686}"
 EndProject
