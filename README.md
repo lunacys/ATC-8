@@ -54,7 +54,12 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 - ```mov a, b``` - moves the value of a to b
 - ```xch a, b``` - exchanges the values of a and b
 - ```db <[a] | a> [, defaultval]``` - defines a byte for either address *[a]* or variable *a* with default value as an optional parameter
-- ```add a``` - adds value of variable *a*  to adx register
+- ```jmp <label>``` - transfer execution uncoditionally to a label
+- ```jgx <label>``` - transfer execution conditionally to a label if value of *ax* register is greater or equals zero (>=0).
+- ```jlx <label>``` - transfer execution conditionally to a label if value of *ax* register is less or equals zero (<=0).
+- ```jex <label>``` - transfer execution conditionally to a label if value of *ax* register equals zero (==0).
+- ```add a``` - adds value of variable *a*  to *ax* register and writes the result to it
+- ```sub a``` - subtracts value of variable *a* and *ax* register and writes the result to it
 
 ### Examples
 
