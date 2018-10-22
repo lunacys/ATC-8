@@ -7,10 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Bus\**" />
+    <EmbeddedResource Remove="Bus\**" />
+    <None Remove="Bus\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Common\" />
-    <Folder Include="Cpu\" />
     <Folder Include="InternalMemory\" />
-    <Folder Include="Bus\" />
     <Folder Include="Display\" />
     <Folder Include="Cartridge\" />
     <Folder Include="Sound\" />

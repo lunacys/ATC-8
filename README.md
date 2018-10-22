@@ -37,10 +37,10 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 
 ## ATC-1801
 
-```csharp
- * 8 bit words
+```
+ * 16 bit words
  * 0x10000 words of ram
- * 8 16-bit registers (ax, bx, cx, dx, si, di, sp, bp) which can be separated to 8-bit versions using aliases (ah-al, bh-bl, etc) (a higher - a lower)
+ * 8 registers (ax, bx, cx, dx, si, di, sp, bp) which can be separated to 8-bit versions using aliases (ah-al, bh-bl, etc) (a higher - a lower)
  * stack pointer (SP)
  * keys pressed (KP)
  * keys unpressed (KU)

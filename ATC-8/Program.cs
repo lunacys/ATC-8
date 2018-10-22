@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using ATC8.Cpu;
 using ATC8.VirtualMachine;
 using ATC8.VirtualMachine.Lexer;
 using ATC8.VirtualMachine.Lexer.Tokens;
@@ -25,15 +26,15 @@ namespace ATC8
             
             var vm = new VirtualMachine.VirtualMachine();
             vm.Interpret(bytecode);*/
-            var binopPrecedence = new Dictionary<char, int>();
+            /*var binopPrecedence = new Dictionary<char, int>();
             binopPrecedence['<'] = 10;
             binopPrecedence['+'] = 20;
             binopPrecedence['-'] = 20;
             binopPrecedence['*'] = 40;  // highest.
-            var input = new InputStream("test.txt");
-            LexerBase lexer = new LexerBase(new StreamReader("test.txt"), binopPrecedence);
+            var input = new InputStream("test.txt");*/
+            //LexerBase lexer = new LexerBase(new StreamReader("test.txt"), binopPrecedence);
             
-            do
+            /*do
             {
                 int res;
                 var tok = lexer.GetNextToken();
@@ -42,9 +43,12 @@ namespace ATC8
                     Console.WriteLine((TokenType) res);
                 else
                     Console.WriteLine((char) tok);
-            } while (lexer.CurrentToken != (int)TokenType.EOF);
+            } while (lexer.CurrentToken != (int)TokenType.EOF);*/
            
             Console.WriteLine("Hello World!");
+
+            Register reg = new Register(RegisterName.Ax, 0xFA);
+            Console.WriteLine($"{reg}");
 
             Console.ReadKey();
         }
