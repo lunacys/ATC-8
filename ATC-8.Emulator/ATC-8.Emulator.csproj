@@ -22,6 +22,16 @@
 
   <ItemGroup>
     <Folder Include="Common\" />
+    <Folder Include="Terminal\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MonoGame.Extended">
+      <HintPath>..\lunge\Deps\MonoGame.Extended.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Extended.Input">
+      <HintPath>..\lunge\Deps\MonoGame.Extended.Input.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

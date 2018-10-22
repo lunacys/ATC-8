@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace ATC8.VirtualMachine
 {
@@ -27,6 +28,9 @@ namespace ATC8.VirtualMachine
                 {"D", 0}
             };
             _registers = new ReadOnlyDictionary<string, int>(regs);
+
+            StreamReader sr = new StreamReader("hello.txt");
+            
         }
 
         public void Interpret(byte[] bytecode)

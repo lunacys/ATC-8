@@ -5,21 +5,30 @@ using lunge.Library.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.ViewportAdapters;
 
 namespace ATC8.Emulator
 {
     public class Emulator : Game
     {
-        GraphicsDeviceManager _graphics;
+        public GraphicsDeviceManager Graphics { get; }
         SpriteBatch _spriteBatch;
         private ScreenGameComponent _screenComponent;
         private StartupScreen _startupScreen;
+        
 
         public Emulator()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            Graphics.PreferredBackBufferWidth = 512;
+            Graphics.PreferredBackBufferHeight = 512;
+
+            Window.AllowUserResizing = true;
+            Graphics.PreferMultiSampling = false;
+            
         }
 
         protected override void Initialize()
@@ -30,7 +39,7 @@ namespace ATC8.Emulator
             _screenComponent.Register(_startupScreen);
 
             Components.Add(_screenComponent);
-
+            
             base.Initialize();
         }
 
@@ -54,7 +63,7 @@ namespace ATC8.Emulator
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
