@@ -7,18 +7,12 @@ namespace ATC8.Cpu
 {
     public class CpuBase : ConsoleComponent
     {
-        private readonly List<Register> _registers;
-
-        public byte this[RegisterName name]
-        {
-            get { return _registers.Find(r => r.Name == name).Value; }
-            set { _registers.Find(r => r.Name == name).Value = value; }
-        }
+        private readonly RegisterContainer _registers;
 
         public CpuBase(Bus bus)
             : base(bus)
         {
-            _registers = new List<Register>
+            _registers = new RegisterContainer(new List<Register>
             {
                 // Public registers
                 new Register(RegisterName.Ax, 0x00), // Accumulator 
@@ -36,12 +30,7 @@ namespace ATC8.Cpu
                     RAR.Read), // Keys pressed
                 new Register(RegisterName.Ku, 0xFF, RAR.Read | RAR.Write,
                     RAR.Read), // Keys unpressed
-            };
-        }
-
-        private byte GetRegisterValue(RegisterName name)
-        {
-            return _registers.Find(r => r.Name == name).Value;
+            });
         }
     }
 }
