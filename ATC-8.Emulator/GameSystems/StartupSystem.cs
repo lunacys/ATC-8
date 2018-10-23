@@ -149,5 +149,12 @@ namespace ATC8.Emulator.GameSystems
 
             base.Draw(gameTime);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            _input.Dispose();
+            _inputListener.Dispose();
+            base.Dispose(disposing);
+        }
     }
 }
