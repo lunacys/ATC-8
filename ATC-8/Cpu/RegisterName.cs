@@ -1,38 +1,41 @@
-﻿namespace ATC8.Cpu
+﻿using System;
+
+namespace ATC8.Cpu
 {
+    [Flags]
     public enum RegisterName
     {
         /// <summary>
         /// Accumulator register
         /// </summary>
-        Ax,
+        Ax = 0,
         /// <summary>
         /// Base register
         /// </summary>
-        Bx,
+        Bx = 1,
         /// <summary>
         /// Counter register
         /// </summary>
-        Cx,
+        Cx = 2,
         /// <summary>
         /// Data register
         /// </summary>
-        Dx,
+        Dx = 4,
         /// <summary>
         /// Source index register
         /// </summary>
-        Si,
+        Si = 8,
         /// <summary>
         /// Destination index register
         /// </summary>
-        Di,
+        Di = 16,
         /// <summary>
         /// Stack pointer register
         /// </summary>
-        Sp,
+        Sp = 32,
         /// <summary>
         /// Base pointer register
         /// </summary>
-        Bp
+        Bp = 64
     }
 }
