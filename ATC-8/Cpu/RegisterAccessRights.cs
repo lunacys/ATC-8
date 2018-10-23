@@ -5,7 +5,8 @@ namespace ATC8.Cpu
     [Flags]
     public enum RegisterAccessRights
     {
-        Read = 0,
-        Write = 1
+        None = 0,
+        Read = 1,
+        Write = 2
     }
 }
