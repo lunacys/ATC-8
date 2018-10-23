@@ -53,7 +53,9 @@ namespace ATC8
             var dx = new Register(RegisterName.Dx, 0b10101010);
             Console.WriteLine($"{ax} {bx} {cx} {dx}");
 
-            cx.Value += dx.Value;
+            //cx.Value += dx.Value;
+
+            Console.WriteLine(((ax.Value<<16)>>12)&0xffff);
 
             Console.ReadKey();
         }

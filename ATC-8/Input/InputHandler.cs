@@ -1,21 +1,21 @@
-﻿using ATC8.IO;
+﻿using System;
+using ATC8.IO;
 
 namespace ATC8.Input
 {
-    public class InputHandler
+    public class InputHandler : ConsoleComponent
     {
-        public byte PressedKeys { get; private set; }
-        public byte UnpressedKeys { get; private set; }
+        private readonly Func<GamepadButtons, bool> _buttonHandler;
 
-        public InputHandler(Bus bus)
+        public InputHandler(Bus bus, Func<GamepadButtons, bool> buttonHandler)
+            : base(bus)
         {
-            PressedKeys = 0x00;
-            UnpressedKeys = 0xFF;
+            _buttonHandler = buttonHandler;
         }
 
-        public void PressButton(GamepadButtons button)
+        /*public TransferAnswer Send(TransferRequest request)
         {
-            PressedKeys |= (byte) button;
-        }
+
+        }*/
     }
 }

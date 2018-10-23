@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using ATC8.IO;
 
 namespace ATC8.Cpu
 {
-    public class CpuBase
+    public class CpuBase : ConsoleComponent
     {
         private readonly List<Register> _registers;
 
@@ -12,7 +13,8 @@ namespace ATC8.Cpu
             set { _registers.Find(r => r.Name == name).Value = value; }
         }
 
-        public CpuBase()
+        public CpuBase(Bus bus)
+            : base(bus)
         {
             _registers = new List<Register>
             {
