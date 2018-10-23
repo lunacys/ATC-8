@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace ATC8
 {
@@ -8,7 +9,7 @@ namespace ATC8
 
         public byte Value
         {
-            get => Convert.ToByte(string.Concat(Convert.ToString(ValueHigh, 2), Convert.ToString(ValueLow, 2)), 2);
+            get => Convert.ToByte(string.Concat(Convert.ToString(ValueHigh, 2).PadLeft(4, '0'), Convert.ToString(ValueLow, 2).PadLeft(4, '0')), 2);
             set
             {
                 var high = Convert.ToByte(Convert.ToString(value, 2).PadLeft(8, '0').Remove(4, 4), 2);
@@ -20,13 +21,13 @@ namespace ATC8
 
         public byte ValueHigh
         {
-            get => Convert.ToByte(Convert.ToString(Value, 2).PadLeft(8, '0').Remove(4, 4), 2);
+            get => _values[0];
             set => _values[0] = value;
         }
 
         public byte ValueLow
         {
-            get => Convert.ToByte(Convert.ToString(Value, 2).PadLeft(8, '0').Remove(0, 4), 2);
+            get => _values[1];
             set => _values[1] = value;
         }
 
@@ -45,7 +46,7 @@ namespace ATC8
 
         public override string ToString()
         {
-            return $"{{{Value.ToBinaryString()} ({Value}) | {ValueHigh.ToBinaryString()} {ValueLow.ToBinaryString()}}}";
+            return $"{{{Value.ToBinaryString()} ({Value})}}";
         }
 
         public static implicit operator Word(byte value)
@@ -56,6 +57,26 @@ namespace ATC8
         public static implicit operator byte(Word value)
         {
             return value.Value;
+        }
+
+        public static implicit operator int(Word value)
+        {
+            return Convert.ToByte(value.Value);
+        }
+
+        public static implicit operator Word(int value)
+        {
+            return new Word(Convert.ToByte(value));
+        }
+
+        public static Word operator +(Word a, Word b)
+        {
+            return new Word(Convert.ToByte(a.Value + b.Value));
+        }
+
+        public static Word operator -(Word a, Word b)
+        {
+            return new Word(Convert.ToByte(a.Value - b.Value));
         }
     }
 }
