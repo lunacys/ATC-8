@@ -28,8 +28,6 @@ namespace ATC8.VirtualMachine
                 {"D", 0}
             };
             _registers = new ReadOnlyDictionary<string, int>(regs);
-
-            StreamReader sr = new StreamReader("hello.txt");
             
         }
 
