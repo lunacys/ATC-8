@@ -47,8 +47,13 @@ namespace ATC8
            
             Console.WriteLine("Hello World!");
 
-            Register reg = new Register(RegisterName.Ax, 0xFA);
-            Console.WriteLine($"{reg}");
+            var ax = new Register(RegisterName.Ax, 0xFA); // 0b11111010
+            var bx = new Register(RegisterName.Bx, 0x00); // 0b00000000
+            var cx = new Register(RegisterName.Cx, 0xFF); // 0b11111111
+            var dx = new Register(RegisterName.Dx, 0b10101010);
+            Console.WriteLine($"{ax} {bx} {cx} {dx}");
+
+            cx.Value += dx.Value;
 
             Console.ReadKey();
         }
