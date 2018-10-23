@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using ATC8.IO;
 
+using RAR = ATC8.Cpu.RegisterAccessRights;
+
 namespace ATC8.Cpu
 {
     public class CpuBase : ConsoleComponent
@@ -30,10 +32,10 @@ namespace ATC8.Cpu
                 new Register(RegisterName.Sp, 0x00), // Stack pointer
                 new Register(RegisterName.Bp, 0x00), // Base pointer
                 // Buttons
-                new Register(RegisterName.Kp, 0x00, RegisterAccessRights.Read | RegisterAccessRights.Write,
-                    RegisterAccessRights.Read), // Keys pressed
-                new Register(RegisterName.Ku, 0xFF, RegisterAccessRights.Read | RegisterAccessRights.Write,
-                    RegisterAccessRights.Read), // Keys unpressed
+                new Register(RegisterName.Kp, 0x00, RAR.Read | RAR.Write,
+                    RAR.Read), // Keys pressed
+                new Register(RegisterName.Ku, 0xFF, RAR.Read | RAR.Write,
+                    RAR.Read), // Keys unpressed
             };
         }
 
