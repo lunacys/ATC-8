@@ -72,7 +72,7 @@ The semicolon symbol is used for commenting code. All line after a semicolon is 
 
 ##### Bank 0
 
-```csharp
+```nasm
 .bank 0     ; set the current bank to 0
 .org 0x8000 ; goto location 0x8000
 
@@ -81,7 +81,7 @@ The semicolon symbol is used for commenting code. All line after a semicolon is 
 
 ##### Bank 1
 
-```csharp
+```nasm
 .bank 1
 .org 0xFFFA
 
@@ -92,7 +92,7 @@ dw 0        ; location of VBlank interrupt
 
 ##### Bank 2
 
-```csharp
+```nasm
 .bank 2
 .org 0x0000
 
