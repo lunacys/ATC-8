@@ -36,6 +36,14 @@ namespace ATC8.Cpu
         /// <summary>
         /// Base pointer register
         /// </summary>
-        Bp = 64
+        Bp = 64,
+        /// <summary>
+        /// Keys pressed
+        /// </summary>
+        Kp = 128,
+        /// <summary>
+        /// Keys unpressed
+        /// </summary>
+        Ku = 256
     }
 }
