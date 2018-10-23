@@ -1,4 +1,5 @@
-﻿using ATC8;
+﻿using System;
+using ATC8;
 using NUnit.Framework;
 
 namespace ATC_8.Tests
@@ -24,6 +25,18 @@ namespace ATC_8.Tests
             Assert.That(b1.FromBinaryString() == 0b10101010);
             Assert.That(b2.FromBinaryString() == 0b00000000);
             Assert.That(b3.FromBinaryString() == 0b11111111);
+
+            byte c1 = 0;
+            byte c2 = 255;
+            byte c3 = 0xFA;
+
+            Assert.That(c1.ToBinaryString() == "00000000");
+            Assert.That(c2.ToBinaryString() == "11111111");
+            Assert.That(c3.ToBinaryString() == "11111010");
+
+            Assert.That(c1.ToBinaryString().FromBinaryString() == 0b00000000);
+            Assert.That(c2.ToBinaryString().FromBinaryString() == 0b11111111);
+            Assert.That(c3.ToBinaryString().FromBinaryString() == 0b11111010);
         }
     }
 }
