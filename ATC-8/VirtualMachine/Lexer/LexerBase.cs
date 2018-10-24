@@ -56,7 +56,6 @@ namespace ATC8.VirtualMachine.Lexer
                 var intValue = int.Parse(numStr);
                 return new Token(TokenType.Integer, intValue);
             }
-            // BUG: Comments don't work
             if (_lastChar == ';')
             {
                 do
