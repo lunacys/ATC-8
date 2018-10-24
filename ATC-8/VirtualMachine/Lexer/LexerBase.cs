@@ -44,6 +44,15 @@ namespace ATC8.VirtualMachine.Lexer
                 return new Token(TokenType.Identifier, identifierString);
             }
 
+            // name         - opcode
+            // .name        - extension opcode
+            // 127          - decimal
+            // 0b10101010   - binary
+            // 0x00FF       - hexadecimal
+            // "string"     - string
+            // [0x00FF]     - memory address (hexadecimal)
+            // ,            - delimiter
+
             if (char.IsDigit(_lastChar) || _lastChar == '.')
             {
                 string numStr = "";
