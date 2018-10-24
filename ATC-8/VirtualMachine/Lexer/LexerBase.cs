@@ -10,8 +10,6 @@ namespace ATC8.VirtualMachine.Lexer
 {
     public class LexerBase
     {
-        public string IdentifierString { get; private set; }
-        public int IntValue { get; private set; }
 
         private char _lastChar = ' ';
         private InputStream _input;
@@ -29,19 +27,21 @@ namespace ATC8.VirtualMachine.Lexer
 
         public Token GetToken()
         {
+            //Console.WriteLine(_input.ReadAllText());
+
             while (char.IsWhiteSpace(_lastChar))
                 _lastChar = _input.Read();
 
             if (char.IsLetter(_lastChar))
             {
-                IdentifierString = "" + _lastChar;
+                var identifierString = "" + _lastChar;
                 while (char.IsLetterOrDigit(_lastChar = _input.Read()))
-                    IdentifierString += _lastChar;
+                    identifierString += _lastChar;
 
-                if (_keywords.Contains(IdentifierString))
-                    return new Token(TokenType.Function, IdentifierString);
+                if (_keywords.Contains(identifierString))
+                    return new Token(TokenType.Function, identifierString);
 
-                return new Token(TokenType.Identifier, IdentifierString);
+                return new Token(TokenType.Identifier, identifierString);
             }
 
             if (char.IsDigit(_lastChar) || _lastChar == '.')
@@ -53,8 +53,8 @@ namespace ATC8.VirtualMachine.Lexer
                     _lastChar = _input.Read();
                 } while (char.IsDigit(_lastChar) || _lastChar == '.');
 
-                IntValue = int.Parse(numStr);
-                return new Token(TokenType.Integer, IntValue);
+                var intValue = int.Parse(numStr);
+                return new Token(TokenType.Integer, intValue);
             }
             // BUG: Comments don't work
             if (_lastChar == ';')
@@ -62,13 +62,13 @@ namespace ATC8.VirtualMachine.Lexer
                 do
                 {
                     _lastChar = _input.Read();
-                } while (_input.EndOfStream && _lastChar != '\n' && _lastChar != '\r');
+                } while (_lastChar != '\0' && _lastChar != '\n' && _lastChar != '\r');
 
                 if (!_input.EndOfStream)
                     return GetToken();
             }
 
-            if (_input.EndOfStream)
+            if (_input.EndOfStream && _lastChar == '\0') // TODO: Refactor this
                 return new Token(TokenType.Eof, null);
 
             char thisChar = _lastChar;

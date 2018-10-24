@@ -56,8 +56,7 @@ namespace ATC8
             //cx.Value += dx.Value;
 
             Console.WriteLine(((ax.Value<<16)>>12)&0xffff);
-
-            // BUG: Token "eats" the last char of the file
+            
             var lexer = new LexerBase(new InputStream("test.txt"));
             Token tok;
             while ((tok = lexer.GetToken()).Type != TokenType.Eof)
