@@ -50,7 +50,20 @@ namespace ATC8.VirtualMachine
         public char Read()
         {
             if (EndOfStream) return '\0';
-            return (char)Reader.Read();
+
+            var ch = (char) Reader.Read();
+            
+            if (ch == '\n' || ch == '\n')
+            {
+                Line++;
+                Column = 0;
+            }
+            else
+            {
+                Column++;
+            }
+
+            return ch;
         }
 
         /// <summary>

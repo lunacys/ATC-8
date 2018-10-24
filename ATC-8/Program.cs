@@ -56,30 +56,34 @@ namespace ATC8
             //cx.Value += dx.Value;
 
             Console.WriteLine(((ax.Value<<16)>>12)&0xffff);
-            
-            var lexer = new LexerBase(new InputStream("test.txt"));
-            Token tok;
-            while ((tok = lexer.GetToken()).Type != TokenType.Eof)
+
+            using (var input = new InputStream("test.txt"))
             {
-                switch (tok.Type)
+                var lexer = new LexerBase(input);
+                Token tok;
+
+                while ((tok = lexer.GetToken()).Type != TokenType.Eof)
                 {
-                    case TokenType.Function:
-                        Console.WriteLine($"Got a function: {tok.Value}");
-                        break;
-                    case TokenType.Identifier:
-                        Console.WriteLine($"Got an identifier: {tok.Value}");
-                        break;
-                    case TokenType.Integer:
-                        Console.WriteLine($"Got an integer: {tok.Value}");
-                        break;
-                    case TokenType.Other:
-                        Console.WriteLine($"Got some other thing: {tok.Value}");
-                        break;
-                    case TokenType.Eof:
-                        Console.WriteLine($"Got Eof");
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    switch (tok.Type)
+                    {
+                        case TokenType.Function:
+                            Console.WriteLine($"Got a function: {tok.Value} ({input.Line}:{input.Column})");
+                            break;
+                        case TokenType.Identifier:
+                            Console.WriteLine($"Got an identifier: {tok.Value} ({input.Line}:{input.Column})");
+                            break;
+                        case TokenType.Integer:
+                            Console.WriteLine($"Got an integer: {tok.Value} ({input.Line}:{input.Column})");
+                            break;
+                        case TokenType.Other:
+                            Console.WriteLine($"Got some other thing: {tok.Value} ({input.Line}:{input.Column})");
+                            break;
+                        case TokenType.Eof:
+                            Console.WriteLine($"Got Eof ({input.Line}:{input.Column})");
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
 
