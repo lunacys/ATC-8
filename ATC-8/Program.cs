@@ -57,6 +57,33 @@ namespace ATC8
 
             Console.WriteLine(((ax.Value<<16)>>12)&0xffff);
 
+            // BUG: Token "eats" the last char of the file
+            var lexer = new LexerBase(new InputStream("test.txt"));
+            Token tok;
+            while ((tok = lexer.GetToken()).Type != TokenType.Eof)
+            {
+                switch (tok.Type)
+                {
+                    case TokenType.Function:
+                        Console.WriteLine($"Got a function: {tok.Value}");
+                        break;
+                    case TokenType.Identifier:
+                        Console.WriteLine($"Got an identifier: {tok.Value}");
+                        break;
+                    case TokenType.Integer:
+                        Console.WriteLine($"Got an integer: {tok.Value}");
+                        break;
+                    case TokenType.Other:
+                        Console.WriteLine($"Got some other thing: {tok.Value}");
+                        break;
+                    case TokenType.Eof:
+                        Console.WriteLine($"Got Eof");
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
             Console.ReadKey();
         }
     }
