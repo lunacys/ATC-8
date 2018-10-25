@@ -52,6 +52,7 @@ namespace ATC8.VirtualMachine.Lexer
             // "string"     - string
             // [0x00FF]     - memory address (hexadecimal)
             // ,            - delimiter
+            // ax, bx...    - register
 
             if (char.IsDigit(_lastChar) || _lastChar == '.')
             {
