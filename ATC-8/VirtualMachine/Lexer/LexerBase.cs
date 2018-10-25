@@ -11,8 +11,9 @@ namespace ATC8.VirtualMachine.Lexer
         private readonly InputStream _input;
 
         private readonly List<string> _keywords;
+        private readonly List<string> _registers;
 
-        private static string ValidDelimiters => "(),";
+        private static string ValidDelimiters => "(),[]";
         private static string ValidOperators => "+-*/";
         private static string ValidIntegerChars => "AaBbCcDdEeFf0123456789bx";
 
@@ -21,10 +22,9 @@ namespace ATC8.VirtualMachine.Lexer
         private static bool IsDelimiter(char ch) => ValidDelimiters.Contains(ch);
         private static bool IsOperator(char ch) => ValidOperators.Contains(ch);
         private static bool IsValidForInteger(char ch) => ValidIntegerChars.Contains(ch);
-
-        private static bool IsMemoryAddress(char ch) => ch == '[';
+        
         private static bool IsLetterOrDigitOrLabel(char ch) => char.IsLetterOrDigit(ch) || ch == ':';
-        private static bool IsIdentOrOpcodeOrLabel(char ch) => char.IsLetter(ch);
+        private static bool IsIdentOrOpcodeOrLabelOrRegister(char ch) => char.IsLetter(ch);
         private static bool IsExtensionOpcode(char ch) => ch == '.';
         private static bool IsStringBeginning(char ch) => ch == '\"';
         private static bool IsCommentBeginning(char ch) => ch == ';';
@@ -36,14 +36,21 @@ namespace ATC8.VirtualMachine.Lexer
             {
                 "bank", "org", "incbin", "dvar", "mov", "jnz", "move", "draw", "jmp"
             };
+            _registers = new List<string>
+            {
+                "ax", "bx", "cx", "dx",
+                "si", "di", "sp", "bp",
+                "kp", "ku"
+            };
         }
 
         public Token GetToken()
         {
-            ReadWhile(char.IsWhiteSpace);
+            while (char.IsWhiteSpace(_lastChar))
+                _lastChar = _input.Read();
 
-            if (IsIdentOrOpcodeOrLabel(_lastChar))
-                return ReadIdentOrOpcodeOrLabel();
+            if (IsIdentOrOpcodeOrLabelOrRegister(_lastChar))
+                return ReadIdentOrOpcodeOrLabelOrRegister();
 
             if (IsExtensionOpcode(_lastChar))
                 return ReadExtensionOpcode();
@@ -51,8 +58,8 @@ namespace ATC8.VirtualMachine.Lexer
             if (IsStringBeginning(_lastChar))
                 return ReadString();
 
-            if (IsMemoryAddress(_lastChar))
-                return ReadMemoryAddress();
+            //if (IsMemoryAddress(_lastChar))
+            //    return ReadMemoryAddress();
 
             if (IsOperator(_lastChar))
                 return ReadOperator();
@@ -61,7 +68,12 @@ namespace ATC8.VirtualMachine.Lexer
                 return ReadDigit();
 
             if (IsDelimiter(_lastChar))
-                return new Token(TokenType.Delimiter, _lastChar);
+            {
+                char t = _lastChar;
+                _lastChar = _input.Read();
+
+                return new Token(TokenType.Delimiter, t);
+            }
 
             if (IsCommentBeginning(_lastChar))
             {
@@ -124,15 +136,18 @@ namespace ATC8.VirtualMachine.Lexer
         {
             var address = ReadWhile(c => c != ']');
 
-            return new Token(TokenType.Address, GetIntFrom(address, GetIntType(address)));
+            return new Token(TokenType.Address, address);
         }
 
-        private Token ReadIdentOrOpcodeOrLabel()
+        private Token ReadIdentOrOpcodeOrLabelOrRegister()
         {
             var identifierString = _lastChar + ReadWhile(IsLetterOrDigitOrLabel);
 
             if (identifierString.EndsWith(':'))
                 return new Token(TokenType.Label, identifierString.Remove(identifierString.Length - 1, 1));
+
+            if (_registers.Contains(identifierString))
+                return new Token(TokenType.Register, identifierString);
 
             if (_keywords.Contains(identifierString))
                 return new Token(TokenType.Opcode, identifierString);

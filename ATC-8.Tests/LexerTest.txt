@@ -5,6 +5,11 @@ label:
 	ident1
 	ident2
 	ident3
+
+	; Registers
+	ax bx cx dx
+	si di sp bp
+	kp ku
 	
 	; Memory addresses
 	[0xF0]

@@ -53,8 +53,6 @@ namespace ATC8
             var dx = new Register(RegisterName.Dx, 0b10101010);
             Console.WriteLine($"{ax} {bx} {cx} {dx}");
 
-            //cx.Value += dx.Value;
-
             Console.WriteLine(((ax.Value<<16)>>12)&0xffff);
 
             using (var input = new InputStream("test.txt"))
@@ -85,19 +83,22 @@ namespace ATC8
                             Console.WriteLine($"Got string: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.ExtensionOpcode:
-                            Console.WriteLine($"Got ext opcode: {tok.Value}");
+                            Console.WriteLine($"Got ext opcode: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Address:
-                            Console.WriteLine($"Got an address: {tok.Value}");
+                            Console.WriteLine($"Got an address: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Delimiter:
-                            Console.WriteLine($"Got a delimiter: {tok.Value}");
+                            Console.WriteLine($"Got a delimiter: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Label:
-                            Console.WriteLine($"Got a label: {tok.Value}");
+                            Console.WriteLine($"Got a label: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Operator:
-                            Console.WriteLine($"Got an operator: {tok.Value}");
+                            Console.WriteLine($"Got an operator: {tok.Value} ({input.Line}:{input.Column})");
+                            break;
+                        case TokenType.Register:
+                            Console.WriteLine($"Got a register: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

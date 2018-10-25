@@ -12,6 +12,7 @@
         Address = 7,
         Delimiter,
         Label,
-        Operator
+        Operator,
+        Register
     }
 }

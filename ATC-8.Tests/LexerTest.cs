@@ -31,6 +31,18 @@ namespace ATC_8.Tests
             Assert.That((t = N).Type == TokenType.Identifier && (string)t.Value == "ident2", "2");
             Assert.That((t = N).Type == TokenType.Identifier && (string)t.Value == "ident3", "3");
 
+            // Registers
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "ax", "1");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "bx", "2");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "cx", "3");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "dx", "1");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "si", "2");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "di", "3");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "sp", "1");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "bp", "2");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "kp", "3");
+            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "ku", "1");
+
             // Memory addresses
             Assert.That((t = N).Type == TokenType.Address && (int)t.Value == Convert.ToInt32("F0", 16), "4");
             Assert.That((t = N).Type == TokenType.Address && (int)t.Value == Convert.ToInt32("0F", 16), "5");
