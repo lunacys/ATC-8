@@ -146,10 +146,10 @@ namespace ATC8.VirtualMachine.Lexer
             if (identifierString.EndsWith(':'))
                 return new Token(TokenType.Label, identifierString.Remove(identifierString.Length - 1, 1));
 
-            if (_registers.Contains(identifierString))
+            if (_registers.Contains(identifierString.ToLower()))
                 return new Token(TokenType.Register, identifierString);
 
-            if (_keywords.Contains(identifierString))
+            if (_keywords.Contains(identifierString.ToLower()))
                 return new Token(TokenType.Opcode, identifierString);
 
             return new Token(TokenType.Identifier, identifierString);
