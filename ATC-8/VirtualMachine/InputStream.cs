@@ -6,15 +6,6 @@ namespace ATC8.VirtualMachine
     public class InputStream : IDisposable
     {
         /// <summary>
-        /// Gets or sets current position within the stream.
-        /// </summary>
-        public long Position // TODO: Make it dependent to the Line and Column props
-        {
-            get { return Reader.BaseStream.Position; }
-            private set { Reader.BaseStream.Position = value; }
-        }
-
-        /// <summary>
         /// Gets or sets current line within the stream.
         /// </summary>
         public int Line { get; private set; } // TODO: Make it dependent to the Column and Position props
@@ -24,9 +15,11 @@ namespace ATC8.VirtualMachine
         /// </summary>
         public int Column { get; private set; } // TODO: Make it dependent to the Line and Position props
 
-        public StreamReader Reader { get; }
+        private StringReader _reader;
 
-        public bool EndOfStream => Reader.EndOfStream;
+        private string _content;
+
+        public bool EndOfStream => Peek() == 0xFFFF;
 
         public InputStream(string filename)
             : this(new StreamReader(filename))
@@ -38,7 +31,15 @@ namespace ATC8.VirtualMachine
 
         public InputStream(StreamReader streamReader)
         {
-            Reader = streamReader;
+            _content = streamReader.ReadToEnd();
+            Line = 1;
+            Column = 0;
+            _reader = new StringReader(_content);
+        }
+
+        public InputStream(StringReader stringReader)
+        {
+            _reader = stringReader;
             Line = 1;
             Column = 0;
         }
@@ -51,7 +52,7 @@ namespace ATC8.VirtualMachine
         {
             if (EndOfStream) return '\0';
 
-            var ch = (char) Reader.Read();
+            var ch = (char) _reader.Read();
             
             if (ch == '\n' || ch == '\n')
             {
@@ -72,13 +73,12 @@ namespace ATC8.VirtualMachine
         /// <returns>A character was peeked.</returns>
         public char Peek()
         {
-            if (EndOfStream) return '\0';
-            return (char)Reader.Peek();
+            return (char)_reader.Peek();
         }
 
         public void Dispose()
         {
-            Reader.Dispose();
+            _reader.Dispose();
             GC.SuppressFinalize(this);
         }
     }
