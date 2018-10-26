@@ -1,14 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using ATC8.VirtualMachine.Lexer;
+using ATC8.VirtualMachine.Lexer.Tokens;
 
 namespace ATC8.VirtualMachine
 {
     public class Parser
     {
+        private Token _currentToken;
+        private LexerBase _lexer;
+
         public byte[] ParseFile(string filename)
         {
             var bytecode = new List<byte>();
+
+            using (InputStream input = new InputStream(filename))
+            {
+                _lexer = new LexerBase(input);
+
+                while (true)
+                {
+                    _currentToken = GetNextToken();
+                    switch (_currentToken.Type)
+                    {
+                        case TokenType.Eof:
+                            return bytecode.ToArray();
+                        case TokenType.Opcode:
+                            break;
+                        case TokenType.Identifier:
+                            break;
+                        case TokenType.Integer:
+                            break;
+                        case TokenType.String:
+                            break;
+                        case TokenType.ExtensionOpcode:
+                            break;
+                        case TokenType.Address:
+                            break;
+                        case TokenType.Delimiter:
+                            break;
+                        case TokenType.Label:
+                            break;
+                        case TokenType.Operator:
+                            break;
+                        case TokenType.Register:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(_currentToken));
+                    }
+                }
+            }
+            
+            /*var bytecode = new List<byte>();
 
             using (StreamReader sr = new StreamReader(filename))
             {
@@ -45,7 +89,12 @@ namespace ATC8.VirtualMachine
                 }
             }
 
-            return bytecode.ToArray();
+            return bytecode.ToArray();*/
+        }
+
+        private Token GetNextToken()
+        {
+            return _lexer.GetToken();
         }
     }
 }
