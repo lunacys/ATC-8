@@ -65,17 +65,17 @@ namespace ATC8
 
         public static implicit operator Word(int value)
         {
-            return new Word(Convert.ToByte(value));
+            return new Word(Convert.ToInt16(value));
         }
 
         public static Word operator +(Word a, Word b)
         {
-            return new Word(Convert.ToByte(a.Value + b.Value));
+            return new Word(Convert.ToInt16(a.Value + b.Value));
         }
 
         public static Word operator -(Word a, Word b)
         {
-            return new Word(Convert.ToByte(a.Value - b.Value));
+            return new Word(Convert.ToInt16(a.Value - b.Value));
         }
 
         public static Word Parse(string value)
