@@ -3,10 +3,15 @@
     public enum TokenType
     {
         Eof = -1,
-        Function = 0,
-        Identifier = 2,
-        Integer = 3,
-        Other = 4,
-        
+        Opcode = 0,
+        Identifier = 1,
+        Integer = 2,
+        String,
+        ExtensionOpcode,
+        Address,
+        Delimiter,
+        Label,
+        Operator,
+        Register
     }
 }

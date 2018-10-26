@@ -9,6 +9,11 @@ namespace ATC8
             return Convert.ToString(value, 2).PadLeft(8, '0');
         }
 
+        public static string ToBinaryString(this short value)
+        {
+            return Convert.ToString(value, 2).PadLeft(8, '0');
+        }
+
         public static byte FromBinaryString(this string value)
         {
             return Convert.ToByte(value, 2);

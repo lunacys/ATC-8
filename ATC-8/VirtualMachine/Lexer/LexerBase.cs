@@ -1,20 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
 using ATC8.VirtualMachine.Lexer.Tokens;
 
 namespace ATC8.VirtualMachine.Lexer
 {
     public class LexerBase
     {
-
         private char _lastChar = ' ';
-        private InputStream _input;
+        private readonly InputStream _input;
 
-        private List<string> _keywords;
+        private readonly List<string> _keywords;
+        private readonly List<string> _registers;
+
+        private static string ValidDelimiters => "(),[]";
+        private static string ValidOperators => "+-*/";
+        private static string ValidIntegerChars => "AaBbCcDdEeFf0123456789bx";
+
+        private bool EndOfStream => _input.EndOfStream && _lastChar == '\0';
+
+        private static bool IsDelimiter(char ch) => ValidDelimiters.Contains(ch);
+        private static bool IsOperator(char ch) => ValidOperators.Contains(ch);
+        private static bool IsValidForInteger(char ch) => ValidIntegerChars.Contains(ch);
+        
+        private static bool IsLetterOrDigitOrLabel(char ch) => char.IsLetterOrDigit(ch) || ch == ':';
+        private static bool IsIdentOrOpcodeOrLabelOrRegister(char ch) => char.IsLetter(ch);
+        private static bool IsExtensionOpcode(char ch) => ch == '.';
+        private static bool IsStringBeginning(char ch) => ch == '\"';
+        private static bool IsCommentBeginning(char ch) => ch == ';';
 
         public LexerBase(InputStream input)
         {
@@ -23,66 +36,161 @@ namespace ATC8.VirtualMachine.Lexer
             {
                 "bank", "org", "incbin", "dvar", "mov", "jnz", "move", "draw", "jmp"
             };
+            _registers = new List<string>
+            {
+                "ax", "bx", "cx", "dx",
+                "si", "di", "sp", "bp",
+                "kp", "ku"
+            };
         }
 
         public Token GetToken()
         {
-            //Console.WriteLine(_input.ReadAllText());
-
             while (char.IsWhiteSpace(_lastChar))
                 _lastChar = _input.Read();
 
-            if (char.IsLetter(_lastChar))
+            if (IsIdentOrOpcodeOrLabelOrRegister(_lastChar))
+                return ReadIdentOrOpcodeOrLabelOrRegister();
+
+            if (IsExtensionOpcode(_lastChar))
+                return ReadExtensionOpcode();
+
+            if (IsStringBeginning(_lastChar))
+                return ReadString();
+
+            //if (IsMemoryAddress(_lastChar))
+            //    return ReadMemoryAddress();
+
+            if (IsOperator(_lastChar))
+                return ReadOperator();
+
+            if (char.IsDigit(_lastChar))
+                return ReadDigit();
+
+            if (IsDelimiter(_lastChar))
             {
-                var identifierString = "" + _lastChar;
-                while (char.IsLetterOrDigit(_lastChar = _input.Read()))
-                    identifierString += _lastChar;
+                char t = _lastChar;
+                _lastChar = _input.Read();
 
-                if (_keywords.Contains(identifierString))
-                    return new Token(TokenType.Function, identifierString);
-
-                return new Token(TokenType.Identifier, identifierString);
+                return new Token(TokenType.Delimiter, t);
             }
 
-            // name         - opcode
-            // .name        - extension opcode
-            // 127          - decimal
-            // 0b10101010   - binary
-            // 0x00FF       - hexadecimal
-            // "string"     - string
-            // [0x00FF]     - memory address (hexadecimal)
-            // ,            - delimiter
-            // ax, bx...    - register
-
-            if (char.IsDigit(_lastChar) || _lastChar == '.')
+            if (IsCommentBeginning(_lastChar))
             {
-                string numStr = "";
-                do
-                {
-                    numStr += _lastChar;
-                    _lastChar = _input.Read();
-                } while (char.IsDigit(_lastChar) || _lastChar == '.');
+                SkipComment();
 
-                var intValue = int.Parse(numStr);
-                return new Token(TokenType.Integer, intValue);
-            }
-            if (_lastChar == ';')
-            {
-                do
-                {
-                    _lastChar = _input.Read();
-                } while (_lastChar != '\0' && _lastChar != '\n' && _lastChar != '\r');
-
-                if (!_input.EndOfStream)
+                if (!EndOfStream)
                     return GetToken();
             }
 
-            if (_input.EndOfStream && _lastChar == '\0') // TODO: Refactor this
+            if (EndOfStream)
                 return new Token(TokenType.Eof, null);
 
-            char thisChar = _lastChar;
+            throw new SyntaxException($"Unknow character: {_lastChar}");
+        }
+
+        private IntegerType GetIntType(string val)
+        {
+            if (val.Contains("b"))
+                return IntegerType.Binary;
+            if (val.Contains("x"))
+                return IntegerType.Hexadecimal;
+            return IntegerType.Decimal;
+        }
+
+        private int GetIntFrom(string val, IntegerType type)
+        {
+            switch (type)
+            {
+                case IntegerType.Binary:
+                    val = val.Replace("0b", "");
+                    return Convert.ToInt32(val, 2);
+                case IntegerType.Decimal:
+                    return Convert.ToInt32(val, 10);
+                case IntegerType.Hexadecimal:
+                    val = val.Replace("0x", "");
+                    return Convert.ToInt32(val, 16);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+
+        private string ReadWhile(Predicate<char> match)
+        {
+            var str = "";
+
+            while (!EndOfStream && match(_lastChar = _input.Read()))
+                str += _lastChar;
+
+            return str;
+        }
+
+        private void SkipComment()
+        {
+            do _lastChar = _input.Read(); while (!EndOfStream 
+                                         && _lastChar != '\n' 
+                                         && _lastChar != '\r');
+        }
+        
+        private Token ReadMemoryAddress()
+        {
+            var address = ReadWhile(c => c != ']');
+
+            return new Token(TokenType.Address, address);
+        }
+
+        private Token ReadIdentOrOpcodeOrLabelOrRegister()
+        {
+            var identifierString = _lastChar + ReadWhile(IsLetterOrDigitOrLabel);
+
+            if (identifierString.EndsWith(':'))
+                return new Token(TokenType.Label, identifierString.Remove(identifierString.Length - 1, 1));
+
+            if (_registers.Contains(identifierString.ToLower()))
+                return new Token(TokenType.Register, identifierString);
+
+            if (_keywords.Contains(identifierString.ToLower()))
+                return new Token(TokenType.Opcode, identifierString);
+
+            return new Token(TokenType.Identifier, identifierString);
+        }
+
+        private Token ReadExtensionOpcode()
+        {
+            var opcode = ReadWhile(char.IsLetterOrDigit);
+
+            return new Token(TokenType.ExtensionOpcode, opcode);
+        }
+
+        private Token ReadString()
+        {
+            var str = "";
+            while ((_lastChar = _input.Read()) != '\"')
+            {
+                if (_lastChar == '\n' || _lastChar == '\r')
+                    throw new SyntaxException("String is not closed!");
+
+                str += _lastChar;
+            }
+
             _lastChar = _input.Read();
-            return new Token(TokenType.Other, thisChar);
+
+            return new Token(TokenType.String, str);
+        }
+
+        private Token ReadOperator()
+        {
+            var op = _lastChar;
+            _lastChar = _input.Read();
+
+            return new Token(TokenType.Operator, op);
+        }
+
+        private Token ReadDigit()
+        {
+            string numStr = _lastChar + ReadWhile(IsValidForInteger);
+
+            return new Token(TokenType.Integer, GetIntFrom(numStr, GetIntType(numStr)));
         }
     }
 }

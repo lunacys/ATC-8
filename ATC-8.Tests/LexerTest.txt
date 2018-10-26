@@ -1,0 +1,47 @@
+		
+; Comment, label
+label:
+	; Identifiers
+	ident1
+	ident2
+	ident3
+
+	; Registers
+	ax bx cx dx
+	si di sp bp
+	kp ku
+	
+	; Memory addresses
+	[0xF0]
+	[0x0F]
+	[123]
+	[0]
+	[0b1111]
+	[0b0000]
+
+	; Integers
+	12345
+	0xF0
+	0x0F
+	0b1111
+	0b0000
+	0
+
+	; Delimiters
+	(),(,)
+
+	; Opcodes
+	dvar mov jnz jmp
+
+	; Extension opcodes
+	.bank .org .incbin .move .draw
+
+	; Strings 
+	""
+	"123"
+	"mystring"
+	"My Very Very Long String!@#$%^&*(),"
+	" asd "
+	"not ended string
+	; Operators
+	+ - * /

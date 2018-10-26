@@ -15,4 +15,10 @@
     <ProjectReference Include="..\ATC-8\ATC-8.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="LexerTest.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
