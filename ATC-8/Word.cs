@@ -6,7 +6,7 @@ namespace ATC8
     {
         private readonly byte[] _values;
 
-        public byte Value
+        public short Value
         {
             get => Convert.ToByte(string.Concat(Convert.ToString(ValueHigh, 2).PadLeft(4, '0'), Convert.ToString(ValueLow, 2).PadLeft(4, '0')), 2);
             set
@@ -30,7 +30,7 @@ namespace ATC8
             set => _values[1] = value;
         }
 
-        public Word(byte value)
+        public Word(short value)
         {
             _values = new byte[2];
             Value = value;
@@ -53,7 +53,7 @@ namespace ATC8
             return new Word(value);
         }
 
-        public static implicit operator byte(Word value)
+        public static implicit operator short(Word value)
         {
             return value.Value;
         }
@@ -76,6 +76,11 @@ namespace ATC8
         public static Word operator -(Word a, Word b)
         {
             return new Word(Convert.ToByte(a.Value - b.Value));
+        }
+
+        public static Word Parse(string value)
+        {
+            return new Word(short.Parse(value));
         }
     }
 }
