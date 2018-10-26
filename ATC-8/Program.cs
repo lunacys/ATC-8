@@ -73,9 +73,6 @@ namespace ATC8
                         case TokenType.Integer:
                             Console.WriteLine($"Got an integer: {tok.Value} ({input.Line}:{input.Column})");
                             break;
-                        case TokenType.Other:
-                            Console.WriteLine($"Got some other thing: {tok.Value} ({input.Line}:{input.Column})");
-                            break;
                         case TokenType.Eof:
                             Console.WriteLine($"Got Eof ({input.Line}:{input.Column})");
                             break;
