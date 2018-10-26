@@ -43,7 +43,7 @@ namespace ATC8.Cpu
             var res = Enum.TryParse(registerName, true, out RegisterName regName);
 
             if (!res)
-                throw new Exception("Cannot parse the register name");
+                throw new ArgumentException("Cannot parse the register name", nameof(registerName));
 
             Set(regName, register);
         }
@@ -51,7 +51,7 @@ namespace ATC8.Cpu
         public Register Get(RegisterName name)
         {
             if (!_registers.ContainsKey(name))
-                throw new Exception("No such register");
+                throw new ArgumentOutOfRangeException(nameof(name), "No such register");
             return _registers[name];
         }
 
@@ -60,7 +60,7 @@ namespace ATC8.Cpu
             var res = Enum.TryParse(registerName, true, out RegisterName regName);
 
             if (!res)
-                throw new Exception("Cannot parse the register name");
+                throw new ArgumentException("Cannot parse the register name", nameof(registerName));
 
             return Get(regName);
         }
