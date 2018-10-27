@@ -21,25 +21,11 @@ namespace ATC_8.Tests
             Assert.That(cx.Value.Value == 0b11111111);
             Assert.That(dx.Value.Value == 0b10101010);
 
-            // Check if the high & low values was written correctly
-            Assert.That(ax.ValueHigh == 0b1111 && ax.ValueLow == 0b1010);
-            Assert.That(bx.ValueHigh == 0b0000 && bx.ValueLow == 0b0000);
-            Assert.That(cx.ValueHigh == 0b1111 && cx.ValueLow == 0b1111);
-            Assert.That(dx.ValueHigh == 0b1010 && dx.ValueLow == 0b1010);
-
-            ax.ValueHigh = 0b0000;
-            ax.ValueLow  = 0b1111;
-
-            bx.ValueHigh = 0b1111;
-            bx.ValueLow =  0b0000;
-
             cx.Value = 0xF0; // 0b11110000
             dx.Value = 0x0F; // 0b00001111
 
             Assert.That(ax.Value == 0b00001111);
             Assert.That(bx.Value == 0b11110000);
-            Assert.That(cx.ValueHigh == bx.ValueHigh && cx.ValueLow == bx.ValueLow);
-            Assert.That(dx.ValueHigh == bx.ValueLow && dx.ValueLow == bx.ValueHigh);
 
             Assert.That(cx.Value + dx.Value == 0b11111111);
 

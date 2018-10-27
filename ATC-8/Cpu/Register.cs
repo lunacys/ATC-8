@@ -8,18 +8,6 @@
         public RegisterAccessRights InternalRights { get; }
         public RegisterAccessRights ExternalRights { get; }
 
-        public byte ValueHigh
-        {
-            get => Value.ValueHigh;
-            set => Value = new Word(value, Value.ValueLow);
-        }
-
-        public byte ValueLow
-        {
-            get => Value.ValueLow;
-            set => Value = new Word(Value.ValueHigh, value);
-        }
-
         public Register(RegisterName name, Word value,
             RegisterAccessRights internalRights =
                 RegisterAccessRights.Read | RegisterAccessRights.Write,

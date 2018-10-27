@@ -4,51 +4,14 @@ namespace ATC8
 {
     public struct Word
     {
-        private readonly byte[] _values;
-
-        public short Value
-        {
-            get => Convert.ToByte(string.Concat(Convert.ToString(ValueHigh, 2).PadLeft(4, '0'), Convert.ToString(ValueLow, 2).PadLeft(4, '0')), 2);
-            set
-            {
-                var high = Convert.ToByte(Convert.ToString(value, 2).PadLeft(8, '0').Remove(4, 4), 2);
-                var low = Convert.ToByte(Convert.ToString(value, 2).PadLeft(8, '0').Remove(0, 4), 2);
-                ValueHigh = high;
-                ValueLow = low;
-            }
-        }
-
-        public byte ValueHigh
-        {
-            get => _values[0];
-            set => _values[0] = value;
-        }
-
-        public byte ValueLow
-        {
-            get => _values[1];
-            set => _values[1] = value;
-        }
+        public short Value { get; set; }
 
         public Word(short value)
         {
-            _values = new byte[2];
             Value = value;
         }
 
-        public Word(byte high, byte low)
-        {
-            _values = new byte[2];
-            ValueHigh = high;
-            ValueLow = low;
-        }
-
-        public override string ToString()
-        {
-            return $"{{{Value.ToBinaryString()} ({Value})}}";
-        }
-
-        public static implicit operator Word(byte value)
+        public static implicit operator Word(short value)
         {
             return new Word(value);
         }
@@ -76,6 +39,15 @@ namespace ATC8
         public static Word operator -(Word a, Word b)
         {
             return new Word(Convert.ToInt16(a.Value - b.Value));
+        }
+
+        public static Word operator *(Word a, Word b)
+        {
+            return new Word(Convert.ToInt16(a.Value * b.Value));
+        }
+        public static Word operator /(Word a, Word b)
+        {
+            return new Word(Convert.ToInt16(a.Value / b.Value));
         }
 
         public static Word Parse(string value)
