@@ -132,8 +132,8 @@ dvar 0        ; location of VBlank interrupt
 | `0x15` | `ifa a, b` | performs next instruction only if `a>b` (signed) |
 | `0x16` | `ifl a, b` | performs next instruction only if `a<b` |
 | `0x17` | `ifu a, b` | performs next instruction only if `a<b` (signed) |
-| `0x18` | `inc a` | increments **a** by one and sets result to **AX** |
-| `0x19` | `dec a` | decrements **a** by one and sets result to **AX** |
+| `0x18` | - | reserved |
+| `0x19` | - | reserved |
 | `0x1A` | `adx a, b` | sets **a** to **a+b+EX**, sets **EX** to `0x0001` if there is an overflow, `0x0` otherwise |
 | `0x1B` | `sbx a, b` | sets **a** to **a-b+EX**, sets **EX** to `0xFFFF` if there is an underflow, `0x0` otherwise |
 | `0x1C` | `sti a, b` | sets **a** to **b**, then increases **SP** and **BP** by one |
@@ -146,8 +146,8 @@ dvar 0        ; location of VBlank interrupt
 | `0x23` | `ias a` | sets **IA** to **a** |
 | `0x24` | `rfi a` | disables interrupt queueing, pops a from stack, then pops **PC** from the stack |
 | `0x25` | `iaq a` | if **a** is nonzero, interrupts will be added to the queue instead of triggered. if **a** is zero, interrupts will be triggered as normal again |
-| `0x26` | - | reserved |
-| `0x27` | - | reserved |
+| `0x26` | `inc a` | increments **a** by one and sets result to **AX** |
+| `0x27` | `dec a` | decrements **a** by one and sets result to **AX** |
 | `0x28` | - | reserved |
 | `0x29` | - | reserved |
 | `0x2A` | - | reserved |
