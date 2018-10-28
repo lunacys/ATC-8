@@ -5,45 +5,36 @@ namespace ATC8.Cpu
     [Flags]
     public enum RegisterName
     {
+        // Common
+        Ax = 0x00,
+        Bx = 0x01,
+        Cx = 0x02,
+        Dx = 0x03,
+        Acx = 0x04,
+        Bcx = 0x05,
         /// <summary>
-        /// Accumulator register
+        /// Jump data
         /// </summary>
-        Ax = 0,
+        Jd = 0x10,
         /// <summary>
-        /// Base register
+        /// Stack pointer
         /// </summary>
-        Bx = 1,
+        Sp = 0x11,
         /// <summary>
-        /// Counter register
+        /// Base pointer
         /// </summary>
-        Cx = 2,
+        Bp = 0x12,
         /// <summary>
-        /// Data register
+        /// Extra/excess
         /// </summary>
-        Dx = 4,
+        Ex = 0x13,
         /// <summary>
-        /// Source index register
+        /// Interrupt address
         /// </summary>
-        Si = 8,
+        Ia = 0x14,
         /// <summary>
-        /// Destination index register
+        /// Program counter
         /// </summary>
-        Di = 16,
-        /// <summary>
-        /// Stack pointer register
-        /// </summary>
-        Sp = 32,
-        /// <summary>
-        /// Base pointer register
-        /// </summary>
-        Bp = 64,
-        /// <summary>
-        /// Keys pressed
-        /// </summary>
-        Kp = 128,
-        /// <summary>
-        /// Keys unpressed
-        /// </summary>
-        Ku = 256
+        Pc = 0x15
     }
 }

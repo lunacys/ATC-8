@@ -39,7 +39,7 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 
 | Register(s) | Description | Access Rights |
 | --- | --- | --- |
-| ax, bx, cx, dx, ex, fx, gx, hx | Common registers that can be directly be read/written from anywhere | Internal: RW, External: RW |
+| ax, bx, cx, dx, acx, bcx | Common registers that can be directly be read/written from anywhere | Internal: RW, External: RW |
 | jd (jump data) | gets or sets jump data | Internal: RW, External: RW |
 | sp (stack pointer) | gets or sets the current stack pointer | Internal: RW, External: RW |
 | bp (base pointer)  | gets or sets the current base pointer | Internal: RW, External: RW |
