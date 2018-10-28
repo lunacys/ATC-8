@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ATC8.Cpu;
 using ATC8.VirtualMachine.Lexer.Tokens;
 
 namespace ATC8.VirtualMachine.Lexer
@@ -38,10 +39,12 @@ namespace ATC8.VirtualMachine.Lexer
             };
             _registers = new List<string>
             {
-                "ax", "bx", "cx", "dx",
-                "si", "di", "sp", "bp",
-                "kp", "ku"
+                
             };
+            foreach (var a in (RegisterName[]) Enum.GetValues(typeof(RegisterName)))
+            {
+                _registers.Add(a.ToString().ToLower());
+            }
         }
 
         public Token GetToken()

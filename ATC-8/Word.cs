@@ -23,7 +23,7 @@ namespace ATC8
 
         public static implicit operator int(Word value)
         {
-            return Convert.ToByte(value.Value);
+            return Convert.ToInt16(value.Value);
         }
 
         public static implicit operator Word(int value)

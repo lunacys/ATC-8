@@ -22,13 +22,13 @@ namespace ATC8.VirtualMachine
 
         public void Interpret(byte[] bytecode)
         {
-            for (int i = 0; i < bytecode.Length; i++)
+            /*for (int i = 0; i < bytecode.Length; i++)
             {
                 var inst = (Instructions)bytecode[i];
 
                 switch (inst)
                 {
-                    /*case Instructions.Move:
+                    case Instructions.Move:
 
                         break;
                     case Instructions.Directive:
@@ -85,11 +85,11 @@ namespace ATC8.VirtualMachine
                         }
 
                         Console.WriteLine();
-                        break;*/
-                    default:
+                        break;
+            default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }
+            }*/
         }
     }
 }
