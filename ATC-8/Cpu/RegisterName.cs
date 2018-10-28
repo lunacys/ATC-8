@@ -3,7 +3,7 @@
 namespace ATC8.Cpu
 {
     [Flags]
-    public enum RegisterName
+    public enum RegisterName : byte
     {
         // Common
         Ax = 0x00,
