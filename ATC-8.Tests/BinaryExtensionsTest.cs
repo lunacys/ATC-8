@@ -37,6 +37,15 @@ namespace ATC_8.Tests
             Assert.That(c1.ToBinaryString().FromBinaryString() == 0b00000000);
             Assert.That(c2.ToBinaryString().FromBinaryString() == 0b11111111);
             Assert.That(c3.ToBinaryString().FromBinaryString() == 0b11111010);
+
+            string str1 = "test string";
+            var str1Arr = str1.ToWordArray();
+
+            for (int i = 0; i < str1.Length; i++)
+            {
+                Assert.That((short)str1[i] == str1Arr[i]);
+            }
+
         }
     }
 }
