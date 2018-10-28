@@ -119,7 +119,7 @@ dvar 0        ; location of VBlank interrupt
 | `0x08` | `mod a, b` | sets **a** to **a%b**. if **b==0**, sets **a** to 0 instead |
 | `0x09` | `mdi a, b` | like `mod`, but treat **a**, **b** as signed (`mdi -7, 16 == -7`) |
 | `0x0A` | `and a, b` | sets **a** to `a&b` |
-| `0x0B` | `bor a, b` | sets **a** to `a|b` |
+| `0x0B` | `bor a, b` | sets **a** to `a\|b` |
 | `0x0C` | `xor a, b` | sets **a** to `a^b` |
 | `0x0D` | `shr a, b` | sets **a** to `a>>b`, sets **EX** to `((a<<16)>>b)&0xffff` (logical shift) |
 | `0x0E` | `asr a, b` | sets **a** to `a>>b`, sets **EX** to `((a<<16)>>>b)&0xffff` (arithmetic shift) (treats a as signed) |
