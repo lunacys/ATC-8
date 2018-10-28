@@ -33,18 +33,14 @@ namespace ATC8.VirtualMachine.Lexer
         public LexerBase(InputStream input)
         {
             _input = input;
-            _keywords = new List<string>
-            {
-                "bank", "org", "incbin", "dvar", "mov", "jnz", "move", "draw", "jmp"
-            };
-            _registers = new List<string>
-            {
-                
-            };
+            _keywords = new List<string>();
+            _registers = new List<string>();
+
+            foreach (var a in (Instructions[])Enum.GetValues(typeof(Instructions)))
+                _keywords.Add(a.ToString().ToLower());
+            
             foreach (var a in (RegisterName[]) Enum.GetValues(typeof(RegisterName)))
-            {
                 _registers.Add(a.ToString().ToLower());
-            }
         }
 
         public Token GetToken()
