@@ -12,41 +12,6 @@ namespace ATC8
     {
         static void Main(string[] args)
         {
-            /*var parser = new Parser();
-            byte[] bytecode;
-            try
-            {
-                bytecode = parser.ParseFile("test.txt");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw;
-            }
-            
-            var vm = new VirtualMachine.VirtualMachine();
-            vm.Interpret(bytecode);*/
-            /*var binopPrecedence = new Dictionary<char, int>();
-            binopPrecedence['<'] = 10;
-            binopPrecedence['+'] = 20;
-            binopPrecedence['-'] = 20;
-            binopPrecedence['*'] = 40;  // highest.
-            var input = new InputStream("test.txt");*/
-            //LexerBase lexer = new LexerBase(new StreamReader("test.txt"), binopPrecedence);
-            
-            /*do
-            {
-                int res;
-                var tok = lexer.GetNextToken();
-                var suc = Enum.TryParse(tok.ToString(), out res);
-                if (suc)
-                    Console.WriteLine((TokenType) res);
-                else
-                    Console.WriteLine((char) tok);
-            } while (lexer.CurrentToken != (int)TokenType.EOF);*/
-           
-            Console.WriteLine("Hello World!");
-
             var ax = new Register(RegisterName.Ax, 0xFA); // 0b11111010
             var bx = new Register(RegisterName.Bx, 0x00); // 0b00000000
             var cx = new Register(RegisterName.Cx, 0xFF); // 0b11111111
@@ -55,44 +20,55 @@ namespace ATC8
 
             Console.WriteLine(((ax.Value<<16)>>12)&0xffff);
 
-            using (var input = new InputStream("test.txt"))
+            string test = "abcdefg";
+            var b = test.ToWordArray();
+            foreach (var word in b)
             {
-                var lexer = new LexerBase(input);
-                Token tok;
+                Console.Write($"{word} ");
+            }
 
-                while ((tok = lexer.GetToken()).Type != TokenType.Eof)
+            Console.WriteLine();
+
+            Parser parser = new Parser();
+            var bytecode = parser.ParseFile("test2.txt");
+
+            Console.WriteLine(Convert.ToString((sbyte)TokenType.Eof, 2));
+
+            TokenType prevType = TokenType.Eof;
+
+            for (int i = 0; i < bytecode.Length; i++)
+            {
+                if (i % 2 == 0 || i == 0)
                 {
-                    switch (tok.Type)
+                    prevType = (TokenType) (short) bytecode[i];
+                    Console.Write($"{(TokenType) (short) bytecode[i]} ");
+                }
+                else
+                {
+                    switch (prevType)
                     {
+                        case TokenType.Eof:
+                            Console.Write("EOF");
+                            break;
                         case TokenType.Opcode:
-                            Console.WriteLine($"Got a function: {tok.Value} ({input.Line}:{input.Column})");
+                            Console.Write($"{(Instructions)(short)bytecode[i]} ");
                             break;
                         case TokenType.Identifier:
-                            Console.WriteLine($"Got an identifier: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Integer:
-                            Console.WriteLine($"Got an integer: {tok.Value} ({input.Line}:{input.Column})");
-                            break;
-                        case TokenType.Eof:
-                            Console.WriteLine($"Got Eof ({input.Line}:{input.Column})");
                             break;
                         case TokenType.String:
-                            Console.WriteLine($"Got string: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.ExtensionOpcode:
-                            Console.WriteLine($"Got ext opcode: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Delimiter:
-                            Console.WriteLine($"Got a delimiter: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Label:
-                            Console.WriteLine($"Got a label: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Operator:
-                            Console.WriteLine($"Got an operator: {tok.Value} ({input.Line}:{input.Column})");
                             break;
                         case TokenType.Register:
-                            Console.WriteLine($"Got a register: {tok.Value} ({input.Line}:{input.Column})");
+                            Console.Write($"{(RegisterName)(short)bytecode[i]} ");
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using ATC8.Cpu;
 using ATC8.VirtualMachine.Lexer;
 using ATC8.VirtualMachine.Lexer.Tokens;
 
@@ -21,104 +21,125 @@ namespace ATC8.VirtualMachine
 
                 while (true)
                 {
-                    _currentToken = GetNextToken();
+                    GetNextToken();
+                    bytecode.Add((short) _currentToken.Type);
+                    // current token type can be only extension opcode, opcode or label,
+                    // and we're moving through the tokens while proceeding those three
+                    // main token types, so if we're getting something else besides
+                    // those three types, we throw an exception
                     switch (_currentToken.Type)
                     {
                         case TokenType.Eof:
                             return bytecode.ToArray();
+
                         case TokenType.Opcode:
-                            if (((byte) ((Instructions) _currentToken.Value)) <= 0x1F)
-                            {
-                                // instructions with 2 parameters
-                                _currentToken = GetNextToken();
-                                if (_currentToken.Type != TokenType.Identifier ||
-                                    _currentToken.Type != TokenType.Integer ||
-                                    (_currentToken.Type != TokenType.Delimiter && (char)_currentToken.Value != '[') ||
-                                    _currentToken.Type != TokenType.Register ||
-                                    _currentToken.Type != TokenType.String)
-                                    throw new CodeErrorException("Invalid token type");
-                                    
-
-
-                                _currentToken = GetNextToken();
-                                if (_currentToken.Type != TokenType.Delimiter && (char)_currentToken.Value != ',')
-                                    throw new CodeErrorException("No comma after first parameter");
-
-                            }
-                            else
-                            {
-                                // instructions with 1 parameter (>0x1F)
-
-                            }
-                            break;
-                        case TokenType.Identifier:
-                            break;
-                        case TokenType.Integer:
-                            bytecode.Add((short)_currentToken.Type);
-                            bytecode.Add((short)_currentToken.Value);
-                            break;
-                        case TokenType.String:
+                            bytecode.AddRange(ProcessOpcode());
                             break;
                         case TokenType.ExtensionOpcode:
-                            break;
-
-                        case TokenType.Delimiter:
+                            bytecode.AddRange(ProcessExtensionOpcode());
                             break;
                         case TokenType.Label:
-                            break;
-                        case TokenType.Operator:
-                            break;
-                        case TokenType.Register:
+                            bytecode.AddRange(ProcessLabel());
                             break;
                         default:
-                            throw new ArgumentOutOfRangeException(nameof(_currentToken));
+                            throw new ArgumentOutOfRangeException(_currentToken.Type.ToString(), $"Unsupported token: {_currentToken.Type} with value {_currentToken.Value}");
                     }
                 }
             }
-            
-            /*var bytecode = new List<byte>();
+        }
 
-            using (StreamReader sr = new StreamReader(filename))
+        private Word[] ProcessOpcode()
+        {
+            var result = new List<Word>();
+
+            var opcode = (byte) Enum.Parse<Instructions>((string)_currentToken.Value, true);
+            result.Add(opcode);
+
+            GetNextToken();
+
+            if (_currentToken.Type == TokenType.Delimiter)
             {
-                var content = sr.ReadToEnd();
-                var lines = content.Split('\n');
-
-                for (var i = 0; i < lines.Length; i++)
+                if ((char) _currentToken.Value == '[') // memory address
                 {
-                    var line = lines[i];
-                    var l = line.TrimStart(' ', '\t');
-                    // Skip empty and comment lines
-                    if (string.IsNullOrWhiteSpace(l) || l.StartsWith('#'))
-                        continue;
-
-                    var inst = l.Split(' ');
-
-                    if (!Enum.TryParse<Instructions>(inst[0], true, out var type))
-                        throw new Exception($"Invalid instruction '{inst[0]}' at line {i + 1}.");
-
-                    bytecode.Add((byte) type);
-
-                    if (type == Instructions.Directive)
-                    { 
-                        var lit = byte.Parse(inst[1]);
-                        bytecode.Add(lit);
-                    }
-                    else if (type == Instructions.Move)
+                    GetNextToken();
+                    if (_currentToken.Type == TokenType.Integer ||
+                        _currentToken.Type == TokenType.Register)
                     {
-                        var lit = byte.Parse(inst[2]);
-                        var reg = byte.Parse(inst[1]);
-                        bytecode.Add(lit);
-                        bytecode.Add(reg);
+                        result.Add(new Word((short)_currentToken.Type));
+                        result.Add(new Word((short) _currentToken.Value));
                     }
+                    else throw new CodeErrorException($"Invalid token: {_currentToken.Type}");
+                }
+            }
+            else if (_currentToken.Type == TokenType.String ||
+                     _currentToken.Type == TokenType.Identifier)
+            {
+                var val = (string)_currentToken.Value;
+                result.Add(new Word((short)_currentToken.Type));
+                // firstly add string length
+                result.Add(val.Length);
+                // then add ASCII values from all the characters
+                result.AddRange(val.ToWordArray());
+            }
+            else if (_currentToken.Type == TokenType.Register)
+            {
+                var val = (byte) _currentToken.Value;
+                result.Add(new Word((short)_currentToken.Type));
+                result.Add(val);
+            }
+
+            GetNextToken();
+
+            if (_currentToken.Type == TokenType.Delimiter && (char) _currentToken.Value == ',')
+            {
+                GetNextToken();
+                if (_currentToken.Type == TokenType.Delimiter)
+                {
+                    if ((char)_currentToken.Value == '[') // memory address
+                    {
+                        GetNextToken();
+                        if (_currentToken.Type == TokenType.Integer ||
+                            _currentToken.Type == TokenType.Register)
+                        {
+                            result.Add(new Word((short)_currentToken.Type));
+                            result.Add(new Word((short)_currentToken.Value));
+                        }
+                        else throw new CodeErrorException($"Invalid token: {_currentToken.Type}");
+                    }
+                }
+                else if (_currentToken.Type == TokenType.String ||
+                         _currentToken.Type == TokenType.Identifier)
+                {
+                    var val = (string)_currentToken.Value;
+                    // firstly add string length
+                    result.Add(val.Length);
+                    // then add ASCII values from all the characters
+                    result.AddRange(val.ToWordArray());
+                }
+                else if (_currentToken.Type == TokenType.Register)
+                {
+                    var val = (byte)_currentToken.Value;
+                    result.Add(new Word((short)_currentToken.Type));
+                    result.Add(val);
                 }
             }
 
-            return bytecode.ToArray();*/
+            return result.ToArray();
+        }
+
+        private Word[] ProcessExtensionOpcode()
+        {
+            throw new NotImplementedException();
+        }
+
+        private Word[] ProcessLabel()
+        {
+            throw new NotImplementedException();
         }
 
         private Token GetNextToken()
         {
-            return _lexer.GetToken();
+            return _currentToken = _lexer.GetToken();
         }
     }
 }
