@@ -16,7 +16,6 @@
     <Folder Include="Common\" />
     <Folder Include="InternalMemory\" />
     <Folder Include="Display\" />
-    <Folder Include="Cartridge\" />
     <Folder Include="Sound\" />
     <Folder Include="Ram\" />
   </ItemGroup>

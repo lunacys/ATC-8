@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using ATC8;
+using NUnit.Framework;
 
 namespace ATC_8.Tests
 {
@@ -8,6 +9,7 @@ namespace ATC_8.Tests
         [Test]
         public void WordUsage_Test()
         {
+            Word w1 = new Word(0x1FFF);
 
         }
     }

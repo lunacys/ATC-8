@@ -11,9 +11,9 @@ namespace ATC8.VirtualMachine
         private Token _currentToken;
         private LexerBase _lexer;
 
-        public byte[] ParseFile(string filename)
+        public Word[] ParseFile(string filename)
         {
-            var bytecode = new List<byte>();
+            var bytecode = new List<Word>();
 
             using (InputStream input = new InputStream(filename))
             {
@@ -31,6 +31,8 @@ namespace ATC8.VirtualMachine
                         case TokenType.Identifier:
                             break;
                         case TokenType.Integer:
+                            bytecode.Add((short)_currentToken.Type);
+                            bytecode.Add((short)_currentToken.Value);
                             break;
                         case TokenType.String:
                             break;
