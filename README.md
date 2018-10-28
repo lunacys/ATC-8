@@ -1,6 +1,6 @@
 # ATC-8
 
-**ATC-8** (Advanced Toy 8-bit Computer) is a virtual machine designed to mimic a non-existing video game console. Unlike PICO-8, ATC-8 has higher specs and it's designed as an video game console emulator. That means that an user can create a game for it using only available assembly language. 
+**ATC-8** (Advanced Toy 8-bit Computer) is a virtual machine designed to mimic a non-existing video game console. Unlike PICO-8, ATC-8 has higher specs and it's designed as an video game console emulator. That means that an user can create a game for it using only available assembly language.
 
 All the projects are written in C# using .NET Core 2.0. Also GUI module uses MonoGame framework.
 
@@ -8,17 +8,17 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 
 **ATC-8** has all the components that a video game console needs and the console is comporable to NES:
 
-- **CPU:** 8-bit ATC-1801 (yyMm, yy - last two numbers of the current year, M - major version, m - minor version). The CPU uses AASM.
-- **RAM:** 2KB (16Kb), 2KB video RAM
+- **CPU:** 16-bit ATC-1801 (yyMm, yy - last two numbers of the current year, M - major version, m - minor version). The CPU uses AASM.
+- **RAM:** 32KB (256Kb), 32KB video RAM
 - **Display:** 256x256 pixels
 - **Colors:** 32 colors palette
-- **Cartridge size:** 64k (28k for sprites, 36k for code & other data)
+- **Cartridge size:** 32K (16K for sprites, 16K for code & other data)
 - **Sound:** 4 channel, 64 definable chip blerps
 - **Input:** Up to 2 8-button controllers
 - **Sprites:** Single bank of 128 8x8 sprites
 - **Map:** 8-bit cells, size of map is unlimited
-- **Internal memory:** 16KB
-- **Code:** ATCPU Assembly
+- **Internal memory:** 16KB for OS and saves
+- **Code:** ATCPU Assembly Language
 
 ## Project structure
 
@@ -37,7 +37,7 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 
 ## ATC-1801
 
-```
+```nasm
  * 16 bit words
  * 0x10000 words of ram
  * 8 registers (ax, bx, cx, dx, si, di, sp, bp) which can be separated to 8-bit versions using aliases (ah-al, bh-bl, etc) (a higher - a lower)
@@ -49,17 +49,20 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 ## Assembly Language Documentation
 
 The registers can store any data or addresses. If you want to store an address in the memory, you should use square brackets and place your address within it, for example: ```mov 15, [0x0100]``` writes the number *15* into the *0x0100* memory position. You can use decimal, heximal or binary numbers:
+
 - ```0b010101``` - binary
 - ```0x00ff``` - heximal
-- ```129``` - decimal 
+- ```129``` - decimal
 
 There are three banks of data used in ATC:
+
 - **Bank 0** - Assembly language code
 - **Bank 1** - Interrupt table
 - **Bank 2** - Sprite and background data
 
 You must set the location of each bank in order to use it using the following command: ```.bank <[0;2]>```.
 The default values are:
+
 - **Bank 0** - [0x8000]
 - **Bank 1** - [0xFFFA]
 - **Bank 2** - [0x0000]
@@ -68,9 +71,9 @@ If you want to transfer execution to the bank order, use ```.org <bank_pos>```. 
 
 The semicolon symbol is used for commenting code. All line after a semicolon is ignored by the interpreter.
 
-#### Examples
+### Examples
 
-##### Bank 0
+#### Bank 0
 
 ```nasm
 .bank 0     ; set the current bank to 0
@@ -79,18 +82,18 @@ The semicolon symbol is used for commenting code. All line after a semicolon is 
 ; program's code would go here.
 ```
 
-##### Bank 1
+#### Bank 1
 
 ```nasm
 .bank 1
 .org 0xFFFA
 
-dw 0        ; location of NMI interrupt
-dw Start    ; code to run at reset, we give address of Start label that
-dw 0        ; location of VBlank interrupt
+dvar 0        ; location of NMI interrupt
+dvar Start    ; code to run at reset, we give address of Start label that
+dvar 0        ; location of VBlank interrupt
 ```
 
-##### Bank 2
+#### Bank 2
 
 ```nasm
 .bank 2
