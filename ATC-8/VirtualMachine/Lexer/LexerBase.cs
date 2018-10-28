@@ -139,7 +139,7 @@ namespace ATC8.VirtualMachine.Lexer
                 return new Token(TokenType.Label, identifierString.Remove(identifierString.Length - 1, 1));
 
             if (_registers.Contains(identifierString.ToLower()))
-                return new Token(TokenType.Register, identifierString);
+                return new Token(TokenType.Register, Enum.Parse<RegisterName>(identifierString, true));
 
             if (_keywords.Contains(identifierString.ToLower()))
                 return new Token(TokenType.Opcode, identifierString);
