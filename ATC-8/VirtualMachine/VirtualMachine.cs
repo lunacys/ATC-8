@@ -39,7 +39,7 @@ namespace ATC8.VirtualMachine
 
                 switch (inst)
                 {
-                    case Instructions.Move:
+                    /*case Instructions.Move:
 
                         break;
                     case Instructions.Directive:
@@ -96,7 +96,7 @@ namespace ATC8.VirtualMachine
                         }
 
                         Console.WriteLine();
-                        break;
+                        break;*/
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

@@ -2,25 +2,94 @@
 {
     public enum Instructions : byte
     {
-        // Commands
-        Move = 0x00,
-        Exchange = 0x01,
-        Addition = 0x02,
-        Subtraction = 0x03,
-        Multiplying = 0x04,
-        Division = 0x05,
-        Incrementation = 0x06,
-        Directive = 0x07,
+        /// <summary>
+        /// Define variable
+        /// </summary>
+        Dvr = 0x00,
+        /// <summary>
+        /// Addition
+        /// </summary>
+        Add = 0x01,
+        /// <summary>
+        /// Subtraction
+        /// </summary>
+        Sub = 0x02,
+        /// <summary>
+        /// Unsigned multiplying
+        /// </summary>
+        Mul = 0x03,
+        /// <summary>
+        /// Signed multiplying
+        /// </summary>
+        Mli,
+        /// <summary>
+        /// Unsigned division
+        /// </summary>
+        Div,
+        /// <summary>
+        /// Signed division
+        /// </summary>
+        Dvi,
+        /// <summary>
+        /// Unsigned modulo
+        /// </summary>
+        Mod,
+        /// <summary>
+        /// Signed modulo
+        /// </summary>
+        Mdi,
+        /// <summary>
+        /// Bitwise AND
+        /// </summary>
+        And,
+        /// <summary>
+        /// Bitwise OR
+        /// </summary>
+        Bor,
+        /// <summary>
+        /// Bitwise XOR
+        /// </summary>
+        Xor,
+        /// <summary>
+        /// Logical shift
+        /// </summary>
+        Shr,
+        /// <summary>
+        /// Arithmetic shift
+        /// </summary>
+        Asr,
+        /// <summary>
+        /// a>>b
+        /// </summary>
+        Shl,
+        Ifb,
+        Ifc,
+        Ife,
+        Ifn,
+        Ifg,
+        Ifa,
+        Ifl,
+        Ifu,
+        Inc,
+        Dec,
+        Adx,
+        Sbx,
+        Sti,
+        Std = 0x1D,
 
-        // Operations
-        SetHealth = 0x10,
-        SetWisdom = 0x11,
-        SetAgility = 0x12,
-        PlaySound = 0x13,
-        SpawnParticles = 0x14,
-        GetHealth = 0x15,
-        GetWisdom = 0x16,
-        GetAgility = 0x17,
-        Print = 0x18
+        Jsr = 0x20,
+        Int,
+        Iag,
+        Ias,
+        Rfi,
+        Iaq = 0x25,
+
+        Jmp = 0x30,
+        Jgx,
+        Jlx,
+        Jex,
+        Jsg,
+        Jsl,
+        Jne = 0x36,
     }
 }

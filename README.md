@@ -163,6 +163,7 @@ dvar 0        ; location of VBlank interrupt
 | `0x34` | `jsg a` | transfers execution to label **a** if **JD>0** |
 | `0x35` | `jsl a` | transfers execution to label **a** if **JD<0** |
 | `0x36` | `jne a` | transfers execution to label **a** if **JD!=0** |
+| `0x37` | `jti a` | transfers execution to index **a**. **a** can be either negative or positive. if **a** is 0, do nothing |
 
 ### Examples
 
