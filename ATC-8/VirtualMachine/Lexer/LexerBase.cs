@@ -130,13 +130,6 @@ namespace ATC8.VirtualMachine.Lexer
                                          && _lastChar != '\n' 
                                          && _lastChar != '\r');
         }
-        
-        private Token ReadMemoryAddress()
-        {
-            var address = ReadWhile(c => c != ']');
-
-            return new Token(TokenType.Address, address);
-        }
 
         private Token ReadIdentOrOpcodeOrLabelOrRegister()
         {

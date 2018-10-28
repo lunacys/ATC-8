@@ -82,9 +82,6 @@ namespace ATC8
                         case TokenType.ExtensionOpcode:
                             Console.WriteLine($"Got ext opcode: {tok.Value} ({input.Line}:{input.Column})");
                             break;
-                        case TokenType.Address:
-                            Console.WriteLine($"Got an address: {tok.Value} ({input.Line}:{input.Column})");
-                            break;
                         case TokenType.Delimiter:
                             Console.WriteLine($"Got a delimiter: {tok.Value} ({input.Line}:{input.Column})");
                             break;

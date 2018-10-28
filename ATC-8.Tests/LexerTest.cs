@@ -43,14 +43,6 @@ namespace ATC_8.Tests
             Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "kp", "3");
             Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "ku", "1");
 
-            // Memory addresses
-            Assert.That((t = N).Type == TokenType.Address && (int)t.Value == Convert.ToInt32("F0", 16), "4");
-            Assert.That((t = N).Type == TokenType.Address && (int)t.Value == Convert.ToInt32("0F", 16), "5");
-            Assert.That((t = N).Type == TokenType.Address && (int)t.Value == 123, "6");
-            Assert.That((t = N).Type == TokenType.Address && (int)t.Value == 0, "7");
-            Assert.That((t = N).Type == TokenType.Address && (int)t.Value == Convert.ToInt32("1111", 2), "8");
-            Assert.That((t = N).Type == TokenType.Address && (int)t.Value == Convert.ToInt32("0000", 2), "9");
-
             // Integers
             Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == 12345, "10");
             Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == Convert.ToInt32("F0", 16), "11");

@@ -27,6 +27,29 @@ namespace ATC8.VirtualMachine
                         case TokenType.Eof:
                             return bytecode.ToArray();
                         case TokenType.Opcode:
+                            if (((byte) ((Instructions) _currentToken.Value)) <= 0x1F)
+                            {
+                                // instructions with 2 parameters
+                                _currentToken = GetNextToken();
+                                if (_currentToken.Type != TokenType.Identifier ||
+                                    _currentToken.Type != TokenType.Integer ||
+                                    (_currentToken.Type != TokenType.Delimiter && (char)_currentToken.Value != '[') ||
+                                    _currentToken.Type != TokenType.Register ||
+                                    _currentToken.Type != TokenType.String)
+                                    throw new CodeErrorException("Invalid token type");
+                                    
+
+
+                                _currentToken = GetNextToken();
+                                if (_currentToken.Type != TokenType.Delimiter && (char)_currentToken.Value != ',')
+                                    throw new CodeErrorException("No comma after first parameter");
+
+                            }
+                            else
+                            {
+                                // instructions with 1 parameter (>0x1F)
+
+                            }
                             break;
                         case TokenType.Identifier:
                             break;
@@ -38,8 +61,7 @@ namespace ATC8.VirtualMachine
                             break;
                         case TokenType.ExtensionOpcode:
                             break;
-                        case TokenType.Address:
-                            break;
+
                         case TokenType.Delimiter:
                             break;
                         case TokenType.Label:

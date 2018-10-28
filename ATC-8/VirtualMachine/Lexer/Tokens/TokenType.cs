@@ -8,7 +8,6 @@
         Integer = 2,
         String,
         ExtensionOpcode,
-        Address,
         Delimiter,
         Label,
         Operator,
