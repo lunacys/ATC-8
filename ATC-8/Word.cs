@@ -54,5 +54,25 @@ namespace ATC8
         {
             return new Word(short.Parse(value));
         }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((Word) obj);
+        }
+
+        public bool Equals(Word other)
+        {
+            return Value == other.Value;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
     }
 }
