@@ -1,6 +1,6 @@
 ﻿namespace ATC8.VirtualMachine.Lexer.Tokens
 {
-    public enum TokenType
+    public enum TokenType : sbyte
     {
         Eof = -1,
         Opcode = 0,
