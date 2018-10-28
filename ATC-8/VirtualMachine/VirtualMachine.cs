@@ -13,22 +13,11 @@ namespace ATC8.VirtualMachine
         //private int[] _stack;
         private readonly Stack<int> _stack;
 
-        private readonly ReadOnlyDictionary<string, int> _registers;
-
         public VirtualMachine()
         {
             //_stackSize = 0;
             //_stack = new int[MaxStackSize];
             _stack = new Stack<int>(MaxStackSize);
-            var regs = new Dictionary<string, int>()
-            {
-                {"A", 0},
-                {"B", 0},
-                {"C", 0},
-                {"D", 0}
-            };
-            _registers = new ReadOnlyDictionary<string, int>(regs);
-            
         }
 
         public void Interpret(byte[] bytecode)

@@ -76,14 +76,14 @@
         Sbx,
         Sti,
         Std = 0x1D,
-
+        // 0x1E, 0x1F are reserved
         Jsr = 0x20,
         Int,
         Iag,
         Ias,
         Rfi,
         Iaq = 0x25,
-
+        // 0x26-0x2F are reserved
         Jmp = 0x30,
         Jgx,
         Jlx,
@@ -91,5 +91,6 @@
         Jsg,
         Jsl,
         Jne = 0x36,
+        // 0x37-0xFF are reserved
     }
 }
