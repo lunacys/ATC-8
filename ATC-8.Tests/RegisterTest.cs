@@ -24,8 +24,8 @@ namespace ATC_8.Tests
             cx.Value = 0xF0; // 0b11110000
             dx.Value = 0x0F; // 0b00001111
 
-            Assert.That(ax.Value == 0b00001111);
-            Assert.That(bx.Value == 0b11110000);
+            Assert.That(dx.Value == 0b00001111);
+            Assert.That(cx.Value == 0b11110000);
 
             Assert.That(cx.Value + dx.Value == 0b11111111);
 
