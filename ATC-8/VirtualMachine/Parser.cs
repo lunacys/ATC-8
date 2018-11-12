@@ -10,10 +10,19 @@ namespace ATC8.VirtualMachine
     {
         private Token _currentToken;
         private LexerBase _lexer;
+        private List<Word> _bytecode;
+
+        private void AddTokenType() =>
+            _bytecode.Add(new Word((short)_currentToken.Type));
+        private void AddTokenValue() =>
+            _bytecode.Add(new Word((short)_currentToken.Value));
+        private Token GetNextToken() =>
+            _currentToken = _lexer.GetToken();
 
         public Word[] ParseFile(string filename)
         {
-            var bytecode = new List<Word>();
+            //var bytecode = new List<Word>();
+            _bytecode = new List<Word>();
 
             using (InputStream input = new InputStream(filename))
             {
@@ -22,7 +31,7 @@ namespace ATC8.VirtualMachine
                 while (true)
                 {
                     GetNextToken();
-                    bytecode.Add((short) _currentToken.Type);
+                    _bytecode.Add((short) _currentToken.Type);
                     // current token type can be only extension opcode, opcode or label,
                     // and we're moving through the tokens while proceeding those three
                     // main token types, so if we're getting something else besides
@@ -30,16 +39,15 @@ namespace ATC8.VirtualMachine
                     switch (_currentToken.Type)
                     {
                         case TokenType.Eof:
-                            return bytecode.ToArray();
-
+                            return _bytecode.ToArray();
                         case TokenType.Opcode:
-                            bytecode.AddRange(ProcessOpcode());
+                            ProcessOpcode();
                             break;
                         case TokenType.ExtensionOpcode:
-                            bytecode.AddRange(ProcessExtensionOpcode());
+                            ProcessExtensionOpcode();
                             break;
                         case TokenType.Label:
-                            bytecode.AddRange(ProcessLabel());
+                            ProcessLabel();
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(_currentToken.Type.ToString(), $"Unsupported token: {_currentToken.Type} with value {_currentToken.Value}");
@@ -48,98 +56,84 @@ namespace ATC8.VirtualMachine
             }
         }
 
-        private Word[] ProcessOpcode()
+        private void ProcessOpcode()
         {
             var result = new List<Word>();
 
             var opcode = (byte) Enum.Parse<Instructions>((string)_currentToken.Value, true);
             result.Add(opcode);
 
+            
+        }
+
+        private void ProcessExtensionOpcode()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ProcessLabel()
+        {
+            ParseLabel();
+        }
+
+        private void ParseOperand()
+        {
             GetNextToken();
 
-            if (_currentToken.Type == TokenType.Delimiter)
-            {
-                if ((char) _currentToken.Value == '[') // memory address
-                {
-                    GetNextToken();
-                    if (_currentToken.Type == TokenType.Integer ||
-                        _currentToken.Type == TokenType.Register)
-                    {
-                        result.Add(new Word((short)_currentToken.Type));
-                        result.Add(new Word((short) _currentToken.Value));
-                    }
-                    else throw new CodeErrorException($"Invalid token: {_currentToken.Type}");
-                }
-            }
-            else if (_currentToken.Type == TokenType.String ||
-                     _currentToken.Type == TokenType.Identifier)
-            {
-                var val = (string)_currentToken.Value;
-                result.Add(new Word((short)_currentToken.Type));
-                // firstly add string length
-                result.Add(val.Length);
-                // then add ASCII values from all the characters
-                result.AddRange(val.ToWordArray());
-            }
+            AddTokenType();
+
+            if (_currentToken.Type == TokenType.Delimiter && (char) _currentToken.Value == '[')
+                ParseMemoryAddress();
+            else if (_currentToken.Type == TokenType.Identifier ||
+                     _currentToken.Type == TokenType.String)
+                ParseStringOrIdentifier();
+            else if (_currentToken.Type == TokenType.Label)
+                ParseLabel();
             else if (_currentToken.Type == TokenType.Register)
+                ParseRegister();
+            else if (_currentToken.Type == TokenType.Integer)
+                ParseInteger();
+            else if (_currentToken.Type == TokenType.Delimiter && (char)_currentToken.Value == ',')
+                ParseOperand();
+            else 
+                throw new CodeErrorException($"Invalid token as Operand: {_currentToken.Value}");
+        }
+
+        private void ParseMemoryAddress()
+        {
+            GetNextToken(); // get next token as current token is '['
+
+            if (_currentToken.Type == TokenType.Integer ||
+                _currentToken.Type == TokenType.Register)
             {
-                var val = (byte) _currentToken.Value;
-                result.Add(new Word((short)_currentToken.Type));
-                result.Add(val);
+                AddTokenValue();
             }
-
-            GetNextToken();
-
-            if (_currentToken.Type == TokenType.Delimiter && (char) _currentToken.Value == ',')
-            {
-                GetNextToken();
-                if (_currentToken.Type == TokenType.Delimiter)
-                {
-                    if ((char)_currentToken.Value == '[') // memory address
-                    {
-                        GetNextToken();
-                        if (_currentToken.Type == TokenType.Integer ||
-                            _currentToken.Type == TokenType.Register)
-                        {
-                            result.Add(new Word((short)_currentToken.Type));
-                            result.Add(new Word((short)_currentToken.Value));
-                        }
-                        else throw new CodeErrorException($"Invalid token: {_currentToken.Type}");
-                    }
-                }
-                else if (_currentToken.Type == TokenType.String ||
-                         _currentToken.Type == TokenType.Identifier)
-                {
-                    var val = (string)_currentToken.Value;
-                    // firstly add string length
-                    result.Add(val.Length);
-                    // then add ASCII values from all the characters
-                    result.AddRange(val.ToWordArray());
-                }
-                else if (_currentToken.Type == TokenType.Register)
-                {
-                    var val = (byte)_currentToken.Value;
-                    result.Add(new Word((short)_currentToken.Type));
-                    result.Add(val);
-                }
-            }
-
-            return result.ToArray();
+            else throw new CodeErrorException($"Invalid token: {_currentToken.Type}");
         }
 
-        private Word[] ProcessExtensionOpcode()
+        private void ParseStringOrIdentifier()
         {
-            throw new NotImplementedException();
+            var val = (string)_currentToken.Value;
+            // firstly add string length
+            _bytecode.Add(val.Length);
+            // then add ASCII values from all the characters
+            _bytecode.AddRange(val.ToWordArray());
+        }
+        
+        private void ParseLabel()
+        {
+            AddTokenValue();
         }
 
-        private Word[] ProcessLabel()
+        private void ParseInteger()
         {
-            throw new NotImplementedException();
+            AddTokenValue();
         }
 
-        private Token GetNextToken()
+        private void ParseRegister()
         {
-            return _currentToken = _lexer.GetToken();
+            var register = Enum.Parse<RegisterName>((string) _currentToken.Value, true);
+            _bytecode.Add(new Word((short)register));
         }
     }
 }
