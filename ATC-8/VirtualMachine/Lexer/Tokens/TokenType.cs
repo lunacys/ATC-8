@@ -11,6 +11,7 @@
         Delimiter,
         Label,
         Operator,
-        Register
+        Register,
+        DebugPoint
     }
 }

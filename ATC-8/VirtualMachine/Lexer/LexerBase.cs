@@ -29,6 +29,7 @@ namespace ATC8.VirtualMachine.Lexer
         private static bool IsExtensionOpcode(char ch) => ch == '.';
         private static bool IsStringBeginning(char ch) => ch == '\"';
         private static bool IsCommentBeginning(char ch) => ch == ';';
+        private static bool IsDebugPoint(char ch) => ch == '!';
 
         public LexerBase(InputStream input)
         {
@@ -48,6 +49,14 @@ namespace ATC8.VirtualMachine.Lexer
             while (char.IsWhiteSpace(_lastChar))
                 _lastChar = _input.Read();
 
+            if (IsDebugPoint(_lastChar))
+            {
+                char t = _lastChar;
+                _lastChar = _input.Read();
+
+                return new Token(TokenType.DebugPoint, t);
+            }
+
             if (IsIdentOrOpcodeOrLabelOrRegister(_lastChar))
                 return ReadIdentOrOpcodeOrLabelOrRegister();
 
@@ -56,9 +65,6 @@ namespace ATC8.VirtualMachine.Lexer
 
             if (IsStringBeginning(_lastChar))
                 return ReadString();
-
-            //if (IsMemoryAddress(_lastChar))
-            //    return ReadMemoryAddress();
 
             if (IsOperator(_lastChar))
                 return ReadOperator();
@@ -87,7 +93,7 @@ namespace ATC8.VirtualMachine.Lexer
 
             throw new SyntaxException($"Unknow character: {_lastChar}");
         }
-
+        
         private IntegerType GetIntType(string val)
         {
             if (val.Contains("b"))
@@ -130,7 +136,7 @@ namespace ATC8.VirtualMachine.Lexer
                                          && _lastChar != '\n' 
                                          && _lastChar != '\r');
         }
-
+        
         private Token ReadIdentOrOpcodeOrLabelOrRegister()
         {
             var identifierString = _lastChar + ReadWhile(IsLetterOrDigitOrLabel);
