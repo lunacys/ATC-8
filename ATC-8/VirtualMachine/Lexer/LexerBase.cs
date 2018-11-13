@@ -30,6 +30,8 @@ namespace ATC8.VirtualMachine.Lexer
         private static bool IsStringBeginning(char ch) => ch == '\"';
         private static bool IsCommentBeginning(char ch) => ch == ';';
         private static bool IsDebugPoint(char ch) => ch == '!';
+        private static bool IsWhiteSpace(char ch) => ch == ' ' || ch == '\t'; // not including new line
+        private static bool IsNewLine(char ch) => ch == '\n' || ch == '\r';
 
         public LexerBase(InputStream input)
         {
@@ -46,7 +48,7 @@ namespace ATC8.VirtualMachine.Lexer
 
         public Token GetToken()
         {
-            while (char.IsWhiteSpace(_lastChar))
+            while (IsWhiteSpace(_lastChar))
                 _lastChar = _input.Read();
 
             if (IsDebugPoint(_lastChar))
@@ -55,6 +57,12 @@ namespace ATC8.VirtualMachine.Lexer
                 _lastChar = _input.Read();
 
                 return new Token(TokenType.DebugPoint, t);
+            }
+
+            if (IsNewLine(_lastChar))
+            {
+                _lastChar = _input.Read();
+                return new Token(TokenType.NewLine, null);
             }
 
             if (IsIdentOrOpcodeOrLabelOrRegister(_lastChar))
@@ -91,7 +99,7 @@ namespace ATC8.VirtualMachine.Lexer
             if (EndOfStream)
                 return new Token(TokenType.Eof, null);
 
-            throw new SyntaxException($"Unknow character: {_lastChar}");
+            throw new SyntaxException($"Unknown character: {_lastChar}");
         }
         
         private IntegerType GetIntType(string val)

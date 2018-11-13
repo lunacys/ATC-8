@@ -12,6 +12,7 @@
         Label = 6,
         Operator = 7,
         Register = 8,
-        DebugPoint = 9
+        DebugPoint = 9,
+        NewLine = 10
     }
 }

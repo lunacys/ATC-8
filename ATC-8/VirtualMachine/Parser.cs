@@ -20,12 +20,13 @@ namespace ATC8.VirtualMachine
         private void AddTokenValue() =>
             _bytecode.Add(new Word(Convert.ToInt16(_currentToken.Value)));
 
-        private void GetNextToken()
+        private Token GetNextToken()
         {
             _currentToken = _lexer.GetToken();
             _tokenPosition++;
             if (_currentToken.Type != TokenType.Eof)
                 AddTokenType();
+            return _currentToken;
         }
 
         public Word[] ParseFile(string filename)
@@ -49,6 +50,8 @@ namespace ATC8.VirtualMachine
                         case TokenType.Eof:
                             //_bytecode.Add((short)TokenType.Eof);
                             return _bytecode.ToArray();
+                        case TokenType.NewLine:
+                            break;
                         case TokenType.Opcode:
                             HandleOpcode();
                             break;
@@ -61,6 +64,9 @@ namespace ATC8.VirtualMachine
                         case TokenType.DebugPoint:
                             HandleDebugPoint();
                             break;
+                        //case TokenType.Delimiter:
+                        //    ParseDelimiter();
+                        //    break;
                         default:
                             throw new ArgumentOutOfRangeException(_currentToken.Type.ToString(),
                                 $"Unsupported token: {_currentToken.Type} with value {_currentToken.Value}  " +
@@ -86,9 +92,9 @@ namespace ATC8.VirtualMachine
             var opcode = (short) Enum.Parse<Instructions>((string)_currentToken.Value, true);
             _bytecode.Add(opcode);
 
-            GetNextToken();
-
-            ParseOperand();
+            while (GetNextToken().Type != TokenType.NewLine && 
+                   _currentToken.Type != TokenType.Eof)
+                ParseOperand();
         }
 
         private void HandleExtensionOpcode()
@@ -98,9 +104,9 @@ namespace ATC8.VirtualMachine
             _bytecode.Add(wa.Length);
             _bytecode.AddRange(wa);
 
-            GetNextToken();
-
-            ParseOperand();
+            while (GetNextToken().Type != TokenType.NewLine && 
+                   _currentToken.Type != TokenType.Eof)
+                ParseOperand();
         }
 
         private void HandleLabel()
@@ -121,10 +127,10 @@ namespace ATC8.VirtualMachine
             else if (_currentToken.Type == TokenType.Delimiter)
                 ParseDelimiter();
 
-            GetNextToken();
+            //GetNextToken();
             
-            if (_currentToken.Type == TokenType.Delimiter)
-                ParseDelimiter(); 
+            //if (_currentToken.Type == TokenType.Delimiter)
+            //    ParseDelimiter(); 
         }
 
         private void ParseDelimiter()
@@ -134,6 +140,7 @@ namespace ATC8.VirtualMachine
                 _bytecode.Add(new Word((short)(char)_currentToken.Value));
                 GetNextToken();
                 ParseMemoryAddress();
+
             }
             else if ((char)_currentToken.Value == ',')
             {
@@ -169,7 +176,7 @@ namespace ATC8.VirtualMachine
 
         private void ParseInteger()
         {
-            _bytecode.Add(new Word((short)_currentToken.Value));
+            _bytecode.Add(new Word(Convert.ToInt16(_currentToken.Value)));
         }
 
         private void ParseRegister()
