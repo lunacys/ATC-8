@@ -44,21 +44,19 @@ namespace ATC8
 
                 Console.WriteLine(Convert.ToString((sbyte)TokenType.Eof, 2));
 
-                Console.WriteLine($"{(char)91}, {(char)93}");
-
-                TokenType prevType = TokenType.Eof;
-
                 for (int i = 0; i < bytecode.Length; i++)
                 {
                     if (i % 20 == 0)
                         Console.WriteLine();
-                    Console.Write($"{bytecode[i]} ");
+                    Console.Write(
+                        bytecode[i] == ',' || bytecode[i] == '[' || bytecode[i] == ']' 
+                            ? $"{(char)bytecode[i]} " 
+                            : $"{bytecode[i]} ");
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                //throw;
                 Console.ReadKey();
                 Environment.Exit(1);
             }

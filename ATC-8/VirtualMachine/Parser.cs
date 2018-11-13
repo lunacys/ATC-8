@@ -11,27 +11,25 @@ namespace ATC8.VirtualMachine
         private Token _currentToken;
         private LexerBase _lexer;
         private List<Word> _bytecode;
-        private int _tokenPosition = 0;
-        private int _parserPosition = 0;
+        private int _tokenPosition;
+        private int _parserPosition;
 
         private void AddTokenType() =>
             _bytecode.Add(new Word((short)_currentToken.Type));
+
         private void AddTokenValue() =>
             _bytecode.Add(new Word(Convert.ToInt16(_currentToken.Value)));
 
-        private Token GetNextToken()
+        private void GetNextToken()
         {
             _currentToken = _lexer.GetToken();
             _tokenPosition++;
             if (_currentToken.Type != TokenType.Eof)
                 AddTokenType();
-            return _currentToken;
         }
-            
 
         public Word[] ParseFile(string filename)
         {
-            //var bytecode = new List<Word>();
             _bytecode = new List<Word>();
 
             using (InputStream input = new InputStream(filename))
@@ -40,10 +38,8 @@ namespace ATC8.VirtualMachine
 
                 while (true)
                 {
-                    
                     GetNextToken();
-                    //_bytecode.Add((short) _currentToken.Type);
-                    //AddTokenType();
+
                     // current token type can be only extension opcode, opcode or label,
                     // and we're moving through the tokens while proceeding those three
                     // main token types, so if we're getting something else besides
@@ -54,17 +50,16 @@ namespace ATC8.VirtualMachine
                             //_bytecode.Add((short)TokenType.Eof);
                             return _bytecode.ToArray();
                         case TokenType.Opcode:
-                            ProcessOpcode();
+                            HandleOpcode();
                             break;
                         case TokenType.ExtensionOpcode:
-                            ProcessExtensionOpcode();
+                            HandleExtensionOpcode();
                             break;
                         case TokenType.Label:
-                            ProcessLabel();
+                            HandleLabel();
                             break;
                         case TokenType.DebugPoint:
-                            Console.WriteLine($"Debug point on: \ntokenPosition: {_tokenPosition} | parserPosition: {_parserPosition}");
-                            _bytecode.Add(_parserPosition);
+                            HandleDebugPoint();
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(_currentToken.Type.ToString(),
@@ -73,34 +68,20 @@ namespace ATC8.VirtualMachine
                                 $"TP: {_tokenPosition}, PP: {_parserPosition} ");
                     }
 
-                    _parserPosition++;
+                    if (_currentToken.Type != TokenType.DebugPoint)
+                        _parserPosition++;
                 }
             }
         }
 
-        private void ParseDelimiter()
+        private void HandleDebugPoint()
         {
-            if ((char) _currentToken.Value == '[')
-            {
-                _bytecode.Add(new Word((short)(char)_currentToken.Value));
-                GetNextToken();
-                ParseMemoryAddress();
-            }
-            else if ((char) _currentToken.Value == ',')
-            {
-                _bytecode.Add(new Word((short)(char)_currentToken.Value));
-                GetNextToken();
-                ParseOperand();
-            }
-            else if ((char) _currentToken.Value == ']')
-            {
-                _bytecode.Add(new Word((short)(char)_currentToken.Value));
-                GetNextToken();
-            }
-            else throw new CodeErrorException($"Unsupported delimiter: {_currentToken.Value}");
+            //Console.WriteLine($"Debug point on: \n" +
+            //                  $"tokenPosition: {_tokenPosition} | parserPosition: {_parserPosition}");
+            //_bytecode.Add(_parserPosition);
         }
 
-        private void ProcessOpcode()
+        private void HandleOpcode()
         {
             var opcode = (short) Enum.Parse<Instructions>((string)_currentToken.Value, true);
             _bytecode.Add(opcode);
@@ -110,7 +91,7 @@ namespace ATC8.VirtualMachine
             ParseOperand();
         }
 
-        private void ProcessExtensionOpcode()
+        private void HandleExtensionOpcode()
         {
             var opcode = (string)_currentToken.Value;
             var wa = opcode.ToWordArray();
@@ -122,7 +103,7 @@ namespace ATC8.VirtualMachine
             ParseOperand();
         }
 
-        private void ProcessLabel()
+        private void HandleLabel()
         {
             ParseStringOrIdentifierOrLabel();
         }
@@ -144,18 +125,27 @@ namespace ATC8.VirtualMachine
             
             if (_currentToken.Type == TokenType.Delimiter)
                 ParseDelimiter(); 
+        }
 
-            //else
-            //    throw new CodeErrorException($"Invalid token as Operand: {_currentToken.Value}");
-
-            /*else if (_currentToken.Type == TokenType.Delimiter && (char) _currentToken.Value == ',')
+        private void ParseDelimiter()
+        {
+            if ((char)_currentToken.Value == '[')
+            {
+                _bytecode.Add(new Word((short)(char)_currentToken.Value));
+                GetNextToken();
+                ParseMemoryAddress();
+            }
+            else if ((char)_currentToken.Value == ',')
             {
                 _bytecode.Add(new Word((short)(char)_currentToken.Value));
                 GetNextToken();
                 ParseOperand();
-            }*/
-            //else
-            //    throw new CodeErrorException($"Invalid token as Operand: {_currentToken.Value}");
+            }
+            else if ((char)_currentToken.Value == ']')
+            {
+                _bytecode.Add(new Word((short)(char)_currentToken.Value));
+            }
+            else throw new CodeErrorException($"Unsupported delimiter: {_currentToken.Value}");
         }
 
         private void ParseMemoryAddress()
