@@ -6,12 +6,12 @@
         Opcode = 0,
         Identifier = 1,
         Integer = 2,
-        String,
-        ExtensionOpcode,
-        Delimiter,
-        Label,
-        Operator,
-        Register,
-        DebugPoint
+        String = 3,
+        ExtensionOpcode = 4,
+        Delimiter = 5,
+        Label = 6,
+        Operator = 7,
+        Register = 8,
+        DebugPoint = 9
     }
 }

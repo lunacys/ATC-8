@@ -30,69 +30,89 @@ namespace ATC8
             Console.WriteLine();
 
             var test2 = b.FromWordArray();
-            foreach (var ch in test2)
+            foreach (char ch in test2)
             {
                 Console.Write($"{ch} ");
             }
 
             Console.WriteLine();
 
-            Parser parser = new Parser();
-            var bytecode = parser.ParseFile("test2.txt");
-
-            Console.WriteLine(Convert.ToString((sbyte)TokenType.Eof, 2));
-
-            TokenType prevType = TokenType.Eof;
-
-            for (int i = 0; i < bytecode.Length; i++)
+            try
             {
-                if (i % 2 == 0 || i == 0)
+                Parser parser = new Parser();
+                var bytecode = parser.ParseFile("test2.txt");
+
+                Console.WriteLine(Convert.ToString((sbyte)TokenType.Eof, 2));
+
+                Console.WriteLine($"{(char)91}, {(char)93}");
+
+                TokenType prevType = TokenType.Eof;
+
+                for (int i = 0; i < bytecode.Length; i++)
                 {
-                    prevType = (TokenType) (short) bytecode[i];
-                    Console.Write($"{(TokenType) (short) bytecode[i]} ");
+                    if (i % 20 == 0)
+                        Console.WriteLine();
+                    Console.Write($"{bytecode[i]} ");
                 }
-                else
-                {
-                    switch (prevType)
-                    {
-                        case TokenType.Eof:
-                            Console.Write("EOF");
-                            break;
-                        case TokenType.Opcode:
-                            Console.Write($"{(Instructions)(short)bytecode[i]} ");
-                            break;
-                        case TokenType.String:
-                        case TokenType.ExtensionOpcode:
-                        case TokenType.Label:
-                        case TokenType.Identifier:
-                            Word size = bytecode[i];
-                            Word[] str = new Word[size];
-                            for (int j = 0; j < size; j++)
-                            {
-                                str[j] = bytecode[++i]; 
-                            }
-                            //Console.Write($"{bytecode[i]}: {str.FromWordArray()}");
-                            Console.Write($"Ident ");
-                            break;
-                        case TokenType.Integer:
-                            Console.WriteLine($"{bytecode[i]}");
-                            break;
-                        case TokenType.Delimiter:
-                            Console.WriteLine($"{bytecode[i]}");
-                            break;
-                        case TokenType.Operator:
-                            Console.WriteLine($"{bytecode[i]}");
-                            break;
-                        case TokenType.Register:
-                            Console.Write($"{(RegisterName)(short)bytecode[i]} ");
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                //throw;
+                Console.ReadKey();
+                Environment.Exit(1);
             }
 
             Console.ReadKey();
         }
     }
 }
+
+
+/*if (i % 2 == 0 || i == 0)
+                    {
+                        prevType = (TokenType) (short) bytecode[i];
+                        Console.Write($"{(TokenType) (short) bytecode[i]} ");
+                    }
+                    else
+                    {*/
+/*prevType = (TokenType)(short)bytecode[i];
+Console.Write($"{(TokenType)(short)bytecode[i]} ");
+i++;
+switch (prevType)
+{
+    case TokenType.Eof:
+        Console.Write("EOF");
+        break;
+    case TokenType.Opcode:
+        Console.Write($"{(Instructions) (short) bytecode[i]}\n");
+
+        break;
+    case TokenType.String:
+    case TokenType.ExtensionOpcode:
+    case TokenType.Label:
+    case TokenType.Identifier:
+        Word size = bytecode[i];
+        Word[] str = new Word[size];
+
+        for (int j = 0; j < size; j++)
+            str[j] = bytecode[++i];
+
+        Console.Write($"'{size}: {str.FromWordArray()}'\n");
+        break;
+    case TokenType.Integer:
+        Console.Write($"{bytecode[i]}\n");
+        break;
+    case TokenType.Delimiter:
+        Console.Write($"'{(char) bytecode[i]}'\n");
+        break;
+    case TokenType.Operator:
+        Console.Write($"{(char) bytecode[i]}\n");
+        break;
+    case TokenType.Register:
+        Console.Write($"{(RegisterName) (short) bytecode[i]}\n");
+        break;
+    default:
+        throw new ArgumentOutOfRangeException();
+}*/
+//}
