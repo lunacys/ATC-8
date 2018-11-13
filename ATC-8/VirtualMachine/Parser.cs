@@ -49,6 +49,9 @@ namespace ATC8.VirtualMachine
                         case TokenType.Label:
                             ProcessLabel();
                             break;
+                        case TokenType.Delimiter:
+                            ParseOperand();
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException(_currentToken.Type.ToString(), $"Unsupported token: {_currentToken.Type} with value {_currentToken.Value}");
                     }
@@ -58,12 +61,12 @@ namespace ATC8.VirtualMachine
 
         private void ProcessOpcode()
         {
-            var result = new List<Word>();
+            var opcode = (short) Enum.Parse<Instructions>((string)_currentToken.Value, true);
+            _bytecode.Add(opcode);
 
-            var opcode = (byte) Enum.Parse<Instructions>((string)_currentToken.Value, true);
-            result.Add(opcode);
+            GetNextToken();
 
-            
+            ParseOperand();
         }
 
         private void ProcessExtensionOpcode()
@@ -78,10 +81,8 @@ namespace ATC8.VirtualMachine
 
         private void ParseOperand()
         {
-            GetNextToken();
-
             AddTokenType();
-
+            
             if (_currentToken.Type == TokenType.Delimiter && (char) _currentToken.Value == '[')
                 ParseMemoryAddress();
             else if (_currentToken.Type == TokenType.Identifier ||
@@ -93,10 +94,17 @@ namespace ATC8.VirtualMachine
                 ParseRegister();
             else if (_currentToken.Type == TokenType.Integer)
                 ParseInteger();
-            else if (_currentToken.Type == TokenType.Delimiter && (char)_currentToken.Value == ',')
-                ParseOperand();
-            else 
-                throw new CodeErrorException($"Invalid token as Operand: {_currentToken.Value}");
+            else
+            {
+                //GetNextToken();
+                if (_currentToken.Type == TokenType.Delimiter && (char) _currentToken.Value == ',')
+                {
+                    GetNextToken();
+                    ParseOperand();
+                }
+                else
+                    throw new CodeErrorException($"Invalid token as Operand: {_currentToken.Value}");
+            } 
         }
 
         private void ParseMemoryAddress()
@@ -122,7 +130,9 @@ namespace ATC8.VirtualMachine
         
         private void ParseLabel()
         {
-            AddTokenValue();
+            var val = (string) _currentToken.Value;
+            _bytecode.Add(val.Length);
+            _bytecode.AddRange(val.ToWordArray());
         }
 
         private void ParseInteger()

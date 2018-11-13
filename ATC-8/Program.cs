@@ -29,6 +29,14 @@ namespace ATC8
 
             Console.WriteLine();
 
+            var test2 = b.FromWordArray();
+            foreach (var ch in test2)
+            {
+                Console.Write($"{ch} ");
+            }
+
+            Console.WriteLine();
+
             Parser parser = new Parser();
             var bytecode = parser.ParseFile("test2.txt");
 
@@ -53,19 +61,27 @@ namespace ATC8
                         case TokenType.Opcode:
                             Console.Write($"{(Instructions)(short)bytecode[i]} ");
                             break;
+                        case TokenType.String:
+                        case TokenType.ExtensionOpcode:
+                        case TokenType.Label:
                         case TokenType.Identifier:
+                            Word size = bytecode[i];
+                            Word[] str = new Word[size];
+                            for (int j = 0; j < size; j++)
+                            {
+                                str[j] = bytecode[++i]; 
+                            }
+                            //Console.Write($"{bytecode[i]}: {str.FromWordArray()}");
+                            Console.Write($"Ident ");
                             break;
                         case TokenType.Integer:
-                            break;
-                        case TokenType.String:
-                            break;
-                        case TokenType.ExtensionOpcode:
+                            Console.WriteLine($"{bytecode[i]}");
                             break;
                         case TokenType.Delimiter:
-                            break;
-                        case TokenType.Label:
+                            Console.WriteLine($"{bytecode[i]}");
                             break;
                         case TokenType.Operator:
+                            Console.WriteLine($"{bytecode[i]}");
                             break;
                         case TokenType.Register:
                             Console.Write($"{(RegisterName)(short)bytecode[i]} ");

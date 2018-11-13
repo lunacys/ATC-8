@@ -30,5 +30,16 @@ namespace ATC8
 
             return bytecode;
         }
+
+        public static string FromWordArray(this Word[] value)
+        {
+            string res = "";
+            for (int i = 0; i < value.Length; i++)
+            {
+                res += (char)value[i];
+            }
+
+            return res;
+        }
     }
 }
