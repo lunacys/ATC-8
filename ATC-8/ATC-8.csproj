@@ -20,4 +20,10 @@
     <Folder Include="Ram\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="test2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
