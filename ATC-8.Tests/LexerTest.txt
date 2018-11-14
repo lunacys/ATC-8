@@ -8,8 +8,7 @@ label:
 
 	; Registers
 	ax bx cx dx
-	si di sp bp
-	kp ku
+	sp pc
 	
 	; Memory addresses
 	[0xF0]
@@ -31,7 +30,7 @@ label:
 	(),(,)
 
 	; Opcodes
-	dvar mov jnz jmp
+	dvr set jne jmp
 
 	; Extension opcodes
 	.bank .org .incbin .move .draw

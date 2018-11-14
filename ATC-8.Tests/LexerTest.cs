@@ -1,4 +1,6 @@
 ﻿using System;
+using ATC8;
+using ATC8.Cpu;
 using ATC8.VirtualMachine;
 using ATC8.VirtualMachine.Lexer;
 using ATC8.VirtualMachine.Lexer.Tokens;
@@ -32,16 +34,32 @@ namespace ATC_8.Tests
             Assert.That((t = N).Type == TokenType.Identifier && (string)t.Value == "ident3", "3");
 
             // Registers
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "ax", "1");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "bx", "2");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "cx", "3");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "dx", "1");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "si", "2");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "di", "3");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "sp", "1");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "bp", "2");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "kp", "3");
-            Assert.That((t = N).Type == TokenType.Register && (string)t.Value == "ku", "1");
+            Assert.That((t = N).Type == TokenType.Register && (RegisterName)t.Value == RegisterName.Ax, "1");
+            Assert.That((t = N).Type == TokenType.Register && (RegisterName)t.Value == RegisterName.Bx, "2");
+            Assert.That((t = N).Type == TokenType.Register && (RegisterName)t.Value == RegisterName.Cx, "3");
+            Assert.That((t = N).Type == TokenType.Register && (RegisterName)t.Value == RegisterName.Dx, "1");
+            Assert.That((t = N).Type == TokenType.Register && (RegisterName)t.Value == RegisterName.Sp, "2");
+            Assert.That((t = N).Type == TokenType.Register && (RegisterName)t.Value == RegisterName.Pc, "3");
+
+            // Memory Addresses 
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == '[');
+            Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == 0b11110000);
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == ']');
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == '[');
+            Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == 0b00001111);
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == ']');
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == '[');
+            Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == 123);
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == ']');
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == '[');
+            Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == 0);
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == ']');
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == '[');
+            Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == 0b1111);
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == ']');
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == '[');
+            Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == 0b0000);
+            Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == ']');
 
             // Integers
             Assert.That((t = N).Type == TokenType.Integer && (int)t.Value == 12345, "10");
@@ -60,9 +78,9 @@ namespace ATC_8.Tests
             Assert.That((t = N).Type == TokenType.Delimiter && (char)t.Value == ')', "2)");
 
             // Opcodes 
-            Assert.That((t = N).Type == TokenType.Opcode && (string)t.Value == "dvar");
-            Assert.That((t = N).Type == TokenType.Opcode && (string)t.Value == "mov");
-            Assert.That((t = N).Type == TokenType.Opcode && (string)t.Value == "jnz");
+            Assert.That((t = N).Type == TokenType.Opcode && (string)t.Value == "dvr");
+            Assert.That((t = N).Type == TokenType.Opcode && (string)t.Value == "set");
+            Assert.That((t = N).Type == TokenType.Opcode && (string)t.Value == "jne");
             Assert.That((t = N).Type == TokenType.Opcode && (string)t.Value == "jmp");
 
             // Ext opcodes 
@@ -89,8 +107,19 @@ namespace ATC_8.Tests
             Close();
         }
 
-        private Token N => 
-            _lexer.GetToken();
+        private Token N
+        {
+            get
+            {
+                Token tok;
+                while ((tok = _lexer.GetToken()).Type == TokenType.NewLine)
+                {
+
+                }
+                return tok;
+            }
+        }
+            
 
         private void Close()
         {
