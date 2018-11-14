@@ -15,6 +15,16 @@ namespace ATC8
             return Convert.ToString(value, 2).PadLeft(8, '0');
         }
 
+        public static string ToHexString(this byte value)
+        {
+            return Convert.ToString(value, 16).PadLeft(2, '0');
+        }
+
+        public static string ToHexString(this short value)
+        {
+            return Convert.ToString(value, 16).PadLeft(4, '0');
+        }
+
         public static byte FromBinaryString(this string value)
         {
             return Convert.ToByte(value, 2);
@@ -54,6 +64,17 @@ namespace ATC8
                 sw.WriteLine($" CREATION DATE:\t\t{DateTime.Now}");
                 sw.WriteLine($"===============================================");
                 sw.WriteLine();
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (maxBytesOnLine != 0 && i != 0 && i % maxBytesOnLine == 0)
+                        sw.WriteLine();
+                    sw.Write($"{((byte)value[i]).ToHexString().ToUpper()} ");
+                }
+
+                sw.WriteLine();
+                sw.WriteLine();
+
                 for (int i = 0; i < value.Length; i++)
                 {
                     if (maxBytesOnLine != 0 && i != 0 && i % maxBytesOnLine == 0)
