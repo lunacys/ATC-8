@@ -36,7 +36,8 @@ namespace ATC8
             }
 
             Console.WriteLine();
-
+            
+            
             try
             {
                 Parser parser = new Parser();
@@ -48,10 +49,11 @@ namespace ATC8
                 {
                     if (i % 20 == 0)
                         Console.WriteLine();
-                    Console.Write(
-                        bytecode[i] == ',' || bytecode[i] == '[' || bytecode[i] == ']' 
-                            ? $"{(char)bytecode[i]} " 
-                            : $"{bytecode[i]} ");
+
+                    if (bytecode[i] == ',' || bytecode[i] == '[' || bytecode[i] == ']')
+                        Console.Write($"{(char) bytecode[i]} ");
+                    else 
+                        Console.Write($"{bytecode[i]} ");
                 }
             }
             catch (Exception e)
@@ -61,56 +63,10 @@ namespace ATC8
                 Environment.Exit(1);
             }
 
+            VirtualMachine.VirtualMachine vm = new VirtualMachine.VirtualMachine();
+            //vm.Interpret(bytecode);
+
             Console.ReadKey();
         }
     }
 }
-
-
-/*if (i % 2 == 0 || i == 0)
-                    {
-                        prevType = (TokenType) (short) bytecode[i];
-                        Console.Write($"{(TokenType) (short) bytecode[i]} ");
-                    }
-                    else
-                    {*/
-/*prevType = (TokenType)(short)bytecode[i];
-Console.Write($"{(TokenType)(short)bytecode[i]} ");
-i++;
-switch (prevType)
-{
-    case TokenType.Eof:
-        Console.Write("EOF");
-        break;
-    case TokenType.Opcode:
-        Console.Write($"{(Instructions) (short) bytecode[i]}\n");
-
-        break;
-    case TokenType.String:
-    case TokenType.ExtensionOpcode:
-    case TokenType.Label:
-    case TokenType.Identifier:
-        Word size = bytecode[i];
-        Word[] str = new Word[size];
-
-        for (int j = 0; j < size; j++)
-            str[j] = bytecode[++i];
-
-        Console.Write($"'{size}: {str.FromWordArray()}'\n");
-        break;
-    case TokenType.Integer:
-        Console.Write($"{bytecode[i]}\n");
-        break;
-    case TokenType.Delimiter:
-        Console.Write($"'{(char) bytecode[i]}'\n");
-        break;
-    case TokenType.Operator:
-        Console.Write($"{(char) bytecode[i]}\n");
-        break;
-    case TokenType.Register:
-        Console.Write($"{(RegisterName) (short) bytecode[i]}\n");
-        break;
-    default:
-        throw new ArgumentOutOfRangeException();
-}*/
-//}

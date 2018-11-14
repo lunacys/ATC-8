@@ -2,94 +2,127 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using ATC8.Cpu;
+using ATC8.VirtualMachine.Lexer.Tokens;
 
 namespace ATC8.VirtualMachine
 {
     public class VirtualMachine
     {
-        private const int MaxStackSize = 32;
+        private const int MaxStackSize = 0xFF; // 255
 
-        private int StackSize => _stack.Count;
-        //private int[] _stack;
-        private readonly Stack<int> _stack;
+        private int _currentPosition = 0;
+        private int StackSize => _bytecode.Length;
+        private Stack<Word> _stack;
+        private Word[] _bytecode;
 
         public VirtualMachine()
         {
             //_stackSize = 0;
             //_stack = new int[MaxStackSize];
-            _stack = new Stack<int>(MaxStackSize);
+            _stack = new Stack<Word>(MaxStackSize);
         }
 
-        public void Interpret(byte[] bytecode)
+        public void Interpret(Word[] bytecode)
         {
-            /*for (int i = 0; i < bytecode.Length; i++)
+            _bytecode = bytecode;
+            for (int i = 0; i < _bytecode.Length; i++)
             {
-                var inst = (Instructions)bytecode[i];
-
-                switch (inst)
+                TokenType tokenType = (TokenType)(sbyte)_bytecode[i];
+                switch (tokenType)
                 {
-                    case Instructions.Move:
-
+                    case TokenType.Eof:
+                        return;
+                    case TokenType.Opcode:
+                        i++;
+                        var opcode = (Instructions) (byte) _bytecode[i];
+                        HandleOpcode(opcode);
                         break;
-                    case Instructions.Directive:
-                        int value = bytecode[++i];
-                        _stack.Push(value);
-                        Console.WriteLine($"Got literal: {value}");
+                    case TokenType.Identifier:
+                        HandleIdentifier(_bytecode[i].ToString());
                         break;
-                    case Instructions.Addition:
-                        int b = _stack.Pop();
-                        int a = _stack.Pop();
-                        _stack.Push(a + b);
-                        Console.WriteLine($"Got addition {a} + {b}: {a + b}");
+                    case TokenType.Integer:
+                        HandleInteger(_bytecode[i]);
                         break;
-                    case Instructions.SetHealth:
-                        int amount = _stack.Pop();
-                        int wizard = _stack.Pop();
-                        Console.WriteLine($"Setting health of wizard {wizard} to {amount}");
+                    case TokenType.String:
+                        HandleString(_bytecode[i].ToString());
                         break;
-                    case Instructions.SetWisdom:
-                        int wamount = _stack.Pop();
-                        int wwizard = _stack.Pop();
-                        Console.WriteLine($"Setting wisdom of wizard {wwizard} to {wamount}");
+                    case TokenType.ExtensionOpcode:
+                        HandleExtOpcode(_bytecode[i].ToString());
                         break;
-                    case Instructions.SetAgility:
-                        int aamount = _stack.Pop();
-                        int awizard = _stack.Pop();
-                        Console.WriteLine($"Setting agility of wizard {awizard} to {aamount}");
+                    case TokenType.Delimiter:
+                        HandleDelimiter((char)_bytecode[i]);
                         break;
-                    case Instructions.PlaySound:
-                        var soundId = _stack.Pop();
-                        Console.WriteLine($"Playing sound {soundId}");
+                    case TokenType.Label:
+                        HandleLabel(_bytecode[i].ToString(), _bytecode[i]);
                         break;
-                    case Instructions.SpawnParticles:
-                        var partId = _stack.Pop();
-                        Console.WriteLine($"Spawning particles {partId}");
+                    case TokenType.Operator:
+                        HandleOperator((char)_bytecode[i]);
                         break;
-                    case Instructions.GetHealth:
-                        int wiz = _stack.Pop();
-                        _stack.Push(123);
+                    case TokenType.Register:
+                        HandleRegister(RegisterName.Ax);
                         break;
-                    case Instructions.GetWisdom:
-                        int wizz = _stack.Pop();
-                        _stack.Push(321);
+                    case TokenType.DebugPoint:
+                        HandleDebugPoint(_bytecode[i]);
                         break;
-                    case Instructions.GetAgility:
-                        int wizzz = _stack.Pop();
-                        _stack.Push(213);
+                    case TokenType.NewLine:
                         break;
-                    case Instructions.Print:
-                        Console.WriteLine("STACK:");
-                        foreach (var val in _stack)
-                        {
-                            Console.Write($"{val} ");
-                        }
-
-                        Console.WriteLine();
-                        break;
-            default:
+                    default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }*/
+
+                i = _currentPosition;
+            }
+        }
+
+        private void HandleOpcode(Instructions opcode)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleIdentifier(string identifier)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleInteger(Word integer)
+        {
+            _stack.Push(integer);
+        }
+
+        private void HandleString(string str)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleExtOpcode(string opcode)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleDelimiter(char delimiter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleLabel(string label, Word position)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleOperator(char op)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleRegister(RegisterName register)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleDebugPoint(Word position)
+        {
+            throw new NotImplementedException();
         }
     }
 }

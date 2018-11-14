@@ -1,0 +1,26 @@
+.incbin "main.spr"      ; include sprite data
+
+dvr myspr, [0x0000]             ; allocate memory for the sprite (dvar - define variable)
+dvr bkg, 0x0000FF    ; set the background color as blue
+dvr x, 0x0000
+dvr y, 0x0000 
+dvr proceed, 0x0001
+dvr reset, 0x0000
+
+set proceed, ax
+set reset, bx
+
+begin:
+    jne kp, end         ; if any key is down (kp register is not zero), end the program 
+    .move myspr, x, y
+    jmp drawbkg
+    .draw myspr, x, y    
+    jmp begin           ; jump at the begin
+
+drawbkg:
+    .draw 
+
+    jne drawbkg
+
+end:
+    .dbug "exiting"
