@@ -56,6 +56,8 @@ namespace ATC8
                         Console.Write($"{bytecode[i]} ");
                 }
 
+                bytecode.SaveToFile("bytecode.txt", 20);
+
                 Console.WriteLine("\n");
                 VirtualMachine.VirtualMachine vm = new VirtualMachine.VirtualMachine();
                 vm.Interpret(bytecode);

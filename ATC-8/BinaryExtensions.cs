@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace ATC8
 {
@@ -40,6 +41,19 @@ namespace ATC8
             }
 
             return res;
+        }
+
+        public static void SaveToFile(this Word[] value, string filepath, int maxBytesOnLine = 0)
+        {
+            using (StreamWriter sw = new StreamWriter(filepath, false))
+            {
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (maxBytesOnLine != 0 && i != 0 && i % maxBytesOnLine == 0)
+                        sw.WriteLine();
+                    sw.Write($"{value[i]} ");
+                }
+            }
         }
     }
 }
