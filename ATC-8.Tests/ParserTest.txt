@@ -1,0 +1,36 @@
+﻿.bank 2
+.org 0x0000
+
+.incbin "main.spr"      ; include sprite data
+
+; let's say that the sprite is placed at [0,0] and its size is 8x8 pixels
+
+.bank 0                 ; set the current bank to 0
+.org 0x80             ; goto location 0x8000
+
+; now writing the game code
+
+dvr myspr, [0x0000]             ; allocate memory for the sprite (dvar - define variable)
+dvr bkg, 0x0000FF    ; set the background color as blue
+dvr x, 0x0000
+dvr y, 0x0000 
+dvr proceed, 0x0001
+dvr reset, 0x0000
+
+set proceed, ax
+set reset, bx
+
+begin:
+    jmp kp, end         ; if any key is down (kp register is not zero), end the program 
+    .move myspr, x, y
+    jmp drawbkg
+    .draw myspr, x, y    
+    jmp begin           ; jump at the begin
+
+drawbkg:
+    .draw 
+
+    jmp drawbkg
+
+end:
+    set ax, "exit"
