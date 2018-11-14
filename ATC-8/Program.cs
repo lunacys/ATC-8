@@ -55,6 +55,10 @@ namespace ATC8
                     else 
                         Console.Write($"{bytecode[i]} ");
                 }
+
+                Console.WriteLine("\n");
+                VirtualMachine.VirtualMachine vm = new VirtualMachine.VirtualMachine();
+                vm.Interpret(bytecode);
             }
             catch (Exception e)
             {
@@ -63,8 +67,7 @@ namespace ATC8
                 Environment.Exit(1);
             }
 
-            VirtualMachine.VirtualMachine vm = new VirtualMachine.VirtualMachine();
-            //vm.Interpret(bytecode);
+            
 
             Console.ReadKey();
         }
