@@ -1,0 +1,41 @@
+; including standard, development and game framework libraries
+.include "atc.std.lib" 
+.include "atc.std.dev.lib"
+.include "atc.game.lib"
+
+section TestGame ; TestGame section
+
+    obj Hero
+        let mysprite, (call .atc.game.loadsprite "myspr.spr")
+        let posX, 0
+        let posY, 0
+
+        def move(x, y) ; defining a move extension opcode for obj Hero 
+            add posX, x ; add value of ax regster to X
+            add posY, y ; add value of bx register to Y
+        end
+
+        def draw
+            .atc.game.drawsprite mysprite, x, y
+        end
+    end
+
+    let hero, $Hero
+    
+    let proceed, 1    
+
+    mainloop: 
+        jne ex, end ; if ex register is not zero, end the game 
+        
+        $Hero.move 2, 1
+
+        $Hero.draw
+
+        loop mainloop
+
+    end: 
+        .atc.std.end "bye!"
+end ; .section TestGame
+
+
+
