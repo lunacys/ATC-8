@@ -24,7 +24,7 @@ namespace ATC8.VirtualMachine
         {
             _currentToken = _lexer.GetToken();
             _tokenPosition++;
-            if (_currentToken.Type != TokenType.Eof)
+            if (_currentToken.Type != TokenType.Eof && _currentToken.Type != TokenType.NewLine)
                 AddTokenType();
             return _currentToken;
         }
