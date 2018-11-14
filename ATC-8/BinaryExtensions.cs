@@ -47,6 +47,13 @@ namespace ATC8
         {
             using (StreamWriter sw = new StreamWriter(filepath, false))
             {
+                sw.WriteLine($"===============================================");
+                sw.WriteLine($" FILEPATH:\t\t{filepath}");
+                sw.WriteLine($" MAX BYTES ON LINE:\t{maxBytesOnLine}");
+                sw.WriteLine($" TOTAL BYTES:\t\t{value.Length}");
+                sw.WriteLine($" CREATION DATE:\t\t{DateTime.Now}");
+                sw.WriteLine($"===============================================");
+                sw.WriteLine();
                 for (int i = 0; i < value.Length; i++)
                 {
                     if (maxBytesOnLine != 0 && i != 0 && i % maxBytesOnLine == 0)
