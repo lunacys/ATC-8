@@ -21,7 +21,7 @@ set proceed, ax
 set reset, bx
 
 begin:
-    jmp kp, end         ; if any key is down (kp register is not zero), end the program 
+    jne kp, end         ; if any key is down (kp register is not zero), end the program 
     .move myspr, x, y
     jmp drawbkg
     .draw myspr, x, y    
@@ -30,7 +30,7 @@ begin:
 drawbkg:
     .draw 
 
-    jmp drawbkg
+    jne drawbkg
 
 end:
-    set ax, "exit"
+    .dbug "exiting"
