@@ -61,7 +61,8 @@ namespace ATC8.VirtualMachine.Lexer
 
             if (IsNewLine(_lastChar))
             {
-                _lastChar = _input.Read();
+                while (IsNewLine(_lastChar))
+                    _lastChar = _input.Read();
                 return new Token(TokenType.NewLine, null);
             }
 

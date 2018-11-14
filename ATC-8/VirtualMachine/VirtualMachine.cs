@@ -15,6 +15,7 @@ namespace ATC8.VirtualMachine
         private int StackSize => _bytecode.Length;
         private Stack<Word> _stack;
         private Word[] _bytecode;
+        private Instructions _nextInstruction;
 
         public VirtualMachine()
         {
@@ -82,6 +83,7 @@ namespace ATC8.VirtualMachine
                         HandleDebugPoint(_bytecode[++i]);
                         break;
                     case TokenType.NewLine:
+                        Console.WriteLine("New Line");
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -102,10 +104,11 @@ namespace ATC8.VirtualMachine
         private void HandleOpcode(Instructions opcode, ref int i)
         {
             Console.WriteLine($"Got an opcode: {opcode}");
+            _nextInstruction = opcode;
             if (opcode == Instructions.Jmp)
             {
                 Console.WriteLine("Jumping at 119");
-                i = 119;
+                //i = 119;
             }
         }
 
