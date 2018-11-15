@@ -10,9 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameEngine", "GameEngine", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lunge.Library", "lunge\lunge.Library\lunge.Library.csproj", "{D6A0DD15-E9D2-4203-92E9-DCE99113FB98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATC-8.Tests", "ATC-8.Tests\ATC-8.Tests.csproj", "{297CB80B-316E-47BA-AF0C-7A7305D674AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATC-8.Tests", "ATC-8.Tests\ATC-8.Tests.csproj", "{297CB80B-316E-47BA-AF0C-7A7305D674AB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{01484F9F-2FFA-47EE-92BA-356E3ED93999}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATC-8.Interpreter", "ATC-8.Interpreter\ATC-8.Interpreter.csproj", "{5DF87ABC-C966-46B9-8CF0-C6EAA5E376E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,10 @@ Global
 		{297CB80B-316E-47BA-AF0C-7A7305D674AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{297CB80B-316E-47BA-AF0C-7A7305D674AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{297CB80B-316E-47BA-AF0C-7A7305D674AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DF87ABC-C966-46B9-8CF0-C6EAA5E376E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DF87ABC-C966-46B9-8CF0-C6EAA5E376E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DF87ABC-C966-46B9-8CF0-C6EAA5E376E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DF87ABC-C966-46B9-8CF0-C6EAA5E376E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

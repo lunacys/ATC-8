@@ -1,9 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>ATC8</RootNamespace>
+    <ApplicationIcon />
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,12 +20,6 @@
     <Folder Include="Display\" />
     <Folder Include="Sound\" />
     <Folder Include="Ram\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="test2.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using ATC8.Cpu;
 using ATC8.VirtualMachine;
-using ATC8.VirtualMachine.Lexer;
 using ATC8.VirtualMachine.Lexer.Tokens;
 
-namespace ATC8
+namespace ATC8.Interpreter
 {
     class Program
     {
@@ -18,7 +15,7 @@ namespace ATC8
             var dx = new Register(RegisterName.Dx, 0b10101010);
             Console.WriteLine($"{ax} {bx} {cx} {dx}");
 
-            Console.WriteLine(((ax.Value<<16)>>12)&0xffff);
+            Console.WriteLine(((ax.Value << 16) >> 12) & 0xffff);
 
             string test = "abcdefg";
             var b = test.ToWordArray();
@@ -36,8 +33,8 @@ namespace ATC8
             }
 
             Console.WriteLine();
-            
-            
+
+
             try
             {
                 Parser parser = new Parser();
@@ -51,8 +48,8 @@ namespace ATC8
                         Console.WriteLine();
 
                     if (bytecode[i] == ',' || bytecode[i] == '[' || bytecode[i] == ']')
-                        Console.Write($"{(char) bytecode[i]} ");
-                    else 
+                        Console.Write($"{(char)bytecode[i]} ");
+                    else
                         Console.Write($"{bytecode[i]} ");
                 }
 
@@ -60,7 +57,7 @@ namespace ATC8
 
                 Console.WriteLine("\n");
                 VirtualMachine.VirtualMachine vm = new VirtualMachine.VirtualMachine();
-                vm.Interpret(bytecode);
+                //vm.Interpret(bytecode);
             }
             catch (Exception e)
             {
@@ -69,8 +66,8 @@ namespace ATC8
                 Environment.Exit(1);
             }
 
-            
 
+            Console.WriteLine("Success! Press any key to continue..");
             Console.ReadKey();
         }
     }
