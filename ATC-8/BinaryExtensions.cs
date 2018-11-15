@@ -22,7 +22,7 @@ namespace ATC8
 
         public static string ToHexString(this short value)
         {
-            return Convert.ToString(value, 16).PadLeft(4, '0');
+            return Convert.ToString(value, 16).PadLeft(4, '0').Insert(2, " ");
         }
 
         public static byte FromBinaryString(this string value)
