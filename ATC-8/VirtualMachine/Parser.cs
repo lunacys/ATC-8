@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using ATC8.Cpu;
 using ATC8.VirtualMachine.Lexer;
 using ATC8.VirtualMachine.Lexer.Tokens;
@@ -35,48 +36,63 @@ namespace ATC8.VirtualMachine
 
             using (InputStream input = new InputStream(filename))
             {
-                _lexer = new LexerBase(input);
+                return Parse(input);
+            }
+        }
 
-                while (true)
+        public Word[] ParseString(string code)
+        {
+            _bytecode = new List<Word>();
+
+            using (InputStream input = new InputStream(new StringReader(code)))
+            {
+                return Parse(input);
+            }
+        }
+
+        public Word[] Parse(InputStream input)
+        {
+            _lexer = new LexerBase(input);
+
+            while (true)
+            {
+                GetNextToken();
+
+                // current token type can be only extension opcode, opcode or label,
+                // and we're moving through the tokens while proceeding those three
+                // main token types, so if we're getting something else besides
+                // those three types, we throw an exception
+                switch (_currentToken.Type)
                 {
-                    GetNextToken();
-
-                    // current token type can be only extension opcode, opcode or label,
-                    // and we're moving through the tokens while proceeding those three
-                    // main token types, so if we're getting something else besides
-                    // those three types, we throw an exception
-                    switch (_currentToken.Type)
-                    {
-                        case TokenType.Eof:
-                            //_bytecode.Add((short)TokenType.Eof);
-                            return _bytecode.ToArray();
-                        case TokenType.NewLine:
-                            break;
-                        case TokenType.Opcode:
-                            HandleOpcode();
-                            break;
-                        case TokenType.ExtensionOpcode:
-                            HandleExtensionOpcode();
-                            break;
-                        case TokenType.Label:
-                            HandleLabel();
-                            break;
-                        case TokenType.DebugPoint:
-                            HandleDebugPoint();
-                            break;
-                        //case TokenType.Delimiter:
-                        //    ParseDelimiter();
-                        //    break;
-                        default:
-                            throw new ArgumentOutOfRangeException(_currentToken.Type.ToString(),
-                                $"Unsupported token: {_currentToken.Type} with value {_currentToken.Value}  " +
-                                $"({input.Line}, {input.Column})\n" +
-                                $"TP: {_tokenPosition}, PP: {_parserPosition} ");
-                    }
-
-                    if (_currentToken.Type != TokenType.DebugPoint)
-                        _parserPosition++;
+                    case TokenType.Eof:
+                        //_bytecode.Add((short)TokenType.Eof);
+                        return _bytecode.ToArray();
+                    case TokenType.NewLine:
+                        break;
+                    case TokenType.Opcode:
+                        HandleOpcode();
+                        break;
+                    case TokenType.ExtensionOpcode:
+                        HandleExtensionOpcode();
+                        break;
+                    case TokenType.Label:
+                        HandleLabel();
+                        break;
+                    case TokenType.DebugPoint:
+                        HandleDebugPoint();
+                        break;
+                    //case TokenType.Delimiter:
+                    //    ParseDelimiter();
+                    //    break;
+                    default:
+                        throw new ArgumentOutOfRangeException(_currentToken.Type.ToString(),
+                            $"Unsupported token: {_currentToken.Type} with value {_currentToken.Value}  " +
+                            $"({input.Line}, {input.Column})\n" +
+                            $"TP: {_tokenPosition}, PP: {_parserPosition} ");
                 }
+
+                if (_currentToken.Type != TokenType.DebugPoint)
+                    _parserPosition++;
             }
         }
 
