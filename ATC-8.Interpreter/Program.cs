@@ -44,7 +44,7 @@ namespace ATC8.Interpreter
 
                     try
                     {
-                        bytecode = parser.ParseString(currLine);
+                        bytecode = parser.ParseString(currLine + "\n");
                     }
                     catch (Exception e)
                     {

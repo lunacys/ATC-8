@@ -83,13 +83,25 @@ namespace ATC8.VirtualMachine
                         HandleDebugPoint(_bytecode[++i]);
                         break;
                     case TokenType.NewLine:
-                        Console.WriteLine("New Line");
+                        //Console.WriteLine("New Line");
+                        Process();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
 
                 _currentPosition = i;
+            }
+        }
+
+        private void Process()
+        {
+            Console.WriteLine("Processing Line");
+
+            if (_nextInstruction == Instructions.Dvr)
+            {
+                
+
             }
         }
 
