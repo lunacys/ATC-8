@@ -17,80 +17,26 @@ namespace ATC8.VirtualMachine
         private Word[] _bytecode;
         private Instructions _nextInstruction;
 
+        private CpuBase _cpu;
+
         public VirtualMachine()
         {
             //_stackSize = 0;
             //_stack = new int[MaxStackSize];
             _stack = new Stack<Word>(MaxStackSize);
+
+            _cpu = new CpuBase(null);
+
+            Console.WriteLine($"CPU: \n{_cpu}");
         }
 
         public void Interpret(Word[] bytecode)
         {
             _bytecode = bytecode;
-            for (int i = 0; i < _bytecode.Length; i++)
-            {
-                TokenType tokenType = (TokenType)(sbyte)_bytecode[i];
-                switch (tokenType)
-                {
-                    case TokenType.Eof:
-                        return;
-                    case TokenType.Opcode:
-                        var opcode = (Instructions) (byte) _bytecode[++i];
-                        HandleOpcode(opcode, ref i);
-                        break;
-                    case TokenType.Identifier:
-                        var identSize = _bytecode[++i];
-                        var identStr = new Word[identSize];
-                        for (int j = 0; j < identSize; j++)
-                            identStr[j] = _bytecode[++i];
-                        HandleIdentifier(identStr.FromWordArray());
-                        break;
-                    case TokenType.Integer:
-                        HandleInteger(_bytecode[++i]);
-                        break;
-                    case TokenType.String:
-                        var stringSize = _bytecode[++i];
-                        var stringStr = new Word[stringSize];
-                        for (int j = 0; j < stringSize; j++)
-                            stringStr[j] = _bytecode[++i];
-                        HandleString(stringStr.FromWordArray());
-                        break;
-                    case TokenType.ExtensionOpcode:
-                        var extOpcodeSize = _bytecode[++i];
-                        var extOpcodeStr = new Word[extOpcodeSize];
-                        for (int j = 0; j < extOpcodeSize; j++)
-                            extOpcodeStr[j] = _bytecode[++i];
-                        HandleExtOpcode(extOpcodeStr.FromWordArray());
-                        break;
-                    case TokenType.Delimiter:
-                        HandleDelimiter((char)_bytecode[++i]);
-                        break;
-                    case TokenType.Label:
-                        var labelSize = _bytecode[++i];
-                        var labelStr = new Word[labelSize];
-                        for (int j = 0; j < labelSize; j++)
-                            labelStr[j] = _bytecode[++i];
-                        HandleLabel(labelStr.FromWordArray(), _currentPosition);
-                        break;
-                    case TokenType.Operator:
-                        HandleOperator((char)_bytecode[++i]);
-                        break;
-                    case TokenType.Register:
-                        var register = (RegisterName) (short) _bytecode[++i];
-                        HandleRegister(register);
-                        break;
-                    case TokenType.DebugPoint:
-                        HandleDebugPoint(_bytecode[++i]);
-                        break;
-                    case TokenType.NewLine:
-                        //Console.WriteLine("New Line");
-                        Process();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
 
-                _currentPosition = i;
+            for (_currentPosition = 0; _currentPosition < _bytecode.Length; _currentPosition++)
+            {
+                
             }
         }
 

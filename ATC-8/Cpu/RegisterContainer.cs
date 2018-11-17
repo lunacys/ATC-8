@@ -1,22 +1,23 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ATC8.Cpu
 {
-    public class RegisterContainer
+    public class RegisterContainer : IEnumerable<KeyValuePair<RegisterName, Register>>
     {
         private readonly Dictionary<RegisterName, Register> _registers;
 
         public Register this[string name]
         {
             get => Get(name);
-            set => Set(name, value);
+            set => Add(name, value);
         }
 
         public Register this[RegisterName name]
         {
             get => Get(name);
-            set => Set(name, value);
+            set => Add(name, value);
         }
 
         public RegisterContainer()
@@ -29,23 +30,23 @@ namespace ATC8.Cpu
             _registers = new Dictionary<RegisterName, Register>();
             foreach (var register in registers)
             {
-                Set(register.Name, register);
+                Add(register.Name, register);
             }
         }
 
-        public void Set(RegisterName name, Register register)
+        public void Add(RegisterName name, Register register)
         {
             _registers[name] = register;
         }
 
-        public void Set(string registerName, Register register)
+        public void Add(string registerName, Register register)
         {
             var res = Enum.TryParse(registerName, true, out RegisterName regName);
 
             if (!res)
                 throw new ArgumentException("Cannot parse the register name", nameof(registerName));
 
-            Set(regName, register);
+            Add(regName, register);
         }
 
         public Register Get(RegisterName name)
@@ -63,6 +64,16 @@ namespace ATC8.Cpu
                 throw new ArgumentException("Cannot parse the register name", nameof(registerName));
 
             return Get(regName);
+        }
+
+        public IEnumerator<KeyValuePair<RegisterName, Register>> GetEnumerator()
+        {
+            return _registers.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

@@ -22,7 +22,7 @@
 
         public override string ToString()
         {
-            return $"{Value}";
+            return $"{Name}:\t{Value.Value.ToHexString().ToUpper()}";
         }
     }
 }
