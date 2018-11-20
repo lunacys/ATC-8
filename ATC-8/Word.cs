@@ -6,6 +6,8 @@ namespace ATC8
     {
         public short Value { get; set; }
 
+        public static int Size => sizeof(short);
+
         public Word(short value)
         {
             Value = value;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using ATC8.Cpu;
+using ATC8.Ram;
 using ATC8.VirtualMachine.Lexer.Tokens;
 
 namespace ATC8.VirtualMachine
@@ -18,6 +19,7 @@ namespace ATC8.VirtualMachine
         private Instructions _nextInstruction;
 
         private CpuBase _cpu;
+        private RamBase _ram;
 
         public VirtualMachine()
         {
@@ -26,6 +28,7 @@ namespace ATC8.VirtualMachine
             _stack = new Stack<Word>(MaxStackSize);
 
             _cpu = new CpuBase(null);
+            _ram = new RamBase(262144); // 32KB
 
             Console.WriteLine($"CPU: \n{_cpu}");
         }

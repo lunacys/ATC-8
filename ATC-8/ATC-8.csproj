@@ -8,6 +8,10 @@
     <StartupObject />
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Bus\**" />
     <EmbeddedResource Remove="Bus\**" />
@@ -19,7 +23,6 @@
     <Folder Include="InternalMemory\" />
     <Folder Include="Display\" />
     <Folder Include="Sound\" />
-    <Folder Include="Ram\" />
   </ItemGroup>
 
 </Project>
