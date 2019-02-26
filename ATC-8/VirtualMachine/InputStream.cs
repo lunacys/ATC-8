@@ -54,7 +54,7 @@ namespace ATC8.VirtualMachine
 
             var ch = (char) _reader.Read();
             
-            if (ch == '\n' || ch == '\n')
+            if (ch == '\n' || ch == '\r')
             {
                 Line++;
                 Column = 0;
