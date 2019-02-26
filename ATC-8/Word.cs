@@ -13,6 +13,12 @@ namespace ATC8
             Value = value;
         }
 
+        public void Divide(Word value, out Word remainder)
+        {
+            remainder = Value % value;
+            Value /= value;
+        }
+
         public static implicit operator Word(short value)
         {
             return new Word(value);
