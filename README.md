@@ -1,24 +1,40 @@
 # ATC-8
 
-**ATC-8** (Advanced Toy 8-bit Computer) is a virtual machine designed to mimic a non-existing video game console. Unlike PICO-8, ATC-8 has higher specs and it's designed as an video game console emulator. That means that an user can create a game for it using only available assembly language.
+## Overview
+
+**ATC-8** (Advanced Toy 8-bit Computer) itself is a virtual machine designed to mimic a non-existing video game console. Unlike PICO-8, ATC-8 has higher specs and it's designed as an video game console emulator. That means that an user can create a game for it using only available assembly language. 
 
 All the projects are written in C# using .NET Core 2.0. Also GUI module uses MonoGame framework.
+
+*Please note: I do not understand assembly languages perfectly, moreover I have little knowledge about them, so I'm writting ATC-8's CPU assembly language, specification and documentation only using my experience in some OOP languages like C#, scripting languages like Lua and functional languages like Scala or F#. Also into that experience bag goes ASM lessons from my university.*
 
 ## Specifications
 
 **ATC-8** has all the components that a video game console needs and the console is comporable to NES:
 
 - **CPU:** 16-bit ATC-1801 (yyMm, yy - last two numbers of the current year, M - major version, m - minor version). The CPU uses AASM.
-- **RAM:** 32KB (256Kb), 32KB video RAM
+- **RAM:** 32KB (256Kb), 32KB video RAM (including sprite bank)
 - **Display:** 256x256 pixels
-- **Colors:** 32 colors palette
+- **Colors:** 64 colors palette
 - **Cartridge size:** 32K (16K for sprites, 16K for code & other data)
 - **Sound:** 4 channel, 64 definable chip blerps
 - **Input:** Up to 2 8-button controllers
 - **Sprites:** Single bank of 128 8x8 sprites
 - **Map:** 8-bit cells, size of map is unlimited
 - **Internal memory:** 16KB for OS and game saves
-- **Code:** ATCPU Assembly Language
+- **Code:** AASM Assembly Language
+
+**Colors** have alpha, red, green and blue channels. Colors can be defined by using hexadecimal notation in format **RRGGBBAA**, where A - alpha channel (FF - completely transparent, 0 - vice versa), R - red channel, G - green channel, B - blue channel. Color palette can contain *any* combinations of the channel, but its amount is limited to 64. If a color is getting out of bounds, it replaces the first color.
+
+16K of **sprites** can be manually replaced by any other data using configuration.
+
+**Sound** and **Input** specs are listed below.
+
+**Sprites bank** is always available from anywhere as it is contains in the video RAM. If sprite size or sprite bank length exceeds its maximum values, behavior is undefined.
+
+**Map** size is only limited to RAM.
+
+**Internal memory** is free for reading and writing from any place.
 
 ## Project structure
 
@@ -34,8 +50,13 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 - `ATC-8.Input` - **Input** module implementation (gamepad input)
 - `ATC-8.Emulator` - Emulator, takes all the modules and composes an usable interface between them (bus)
 - `ATC-8.Gui` - Graphical user interface for the emulator (VM)
+- `ATC-8.Game` - Puzzle game based on the ATC-8
 
 ## ATC-1801
+
+**ATC-1801** is a CPU that is used by the ATC-8. It is significantly easier to program in that is a real assembly language (line the one for i386 CPU), but in other way it may be harder to use than some habitual high-level languages like Java or C#. 
+
+### Registers table:
 
 | Register(s) | Description | Access Rights |
 | --- | --- | --- |
@@ -46,6 +67,9 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 | ex (extra/excess) | gets either extra or excess | Internal: RW, External: R |
 | ia (interrupt address) | gets the last interruption | Internal: RW, External: R |
 | pc (programm counter) | gets the current instruction's index | Internal: RW, External: R |
+| dp (debug pointer )| contains pointer to the next debug point in a program | Internal: RW, External: NONE |
+
+Every register is 2 bytes long.
 
 ## Assembly Language Documentation
 
@@ -54,6 +78,16 @@ The registers can store any data or addresses. If you want to store an address i
 - ```0b010101``` - binary
 - ```0x00ff``` - heximal
 - ```129``` - decimal
+
+Every memory addres has 16 bit offset, that means when you're getting and writting to address [0x100] value 0b1111000000000001 (16 bit), the memory at position [0x100] will have this data:
+```
+Hexadecimal version:
+_________________
+_0_|_F_0_0_1_|_0_
+   |         |
+[0x100]   [0x101]
+```
+Normally the primary data types are **WORD** (2 bytes long) and **STR** (first byte is size of the string, next N bytes are ASCII characters 1 byte long), but user can define their own type using specs that are listed below.
 
 There are three banks of data used in ATC:
 
@@ -70,7 +104,7 @@ The default values are:
 
 If you want to transfer execution to the bank order, use ```.org <bank_pos>```. The bank position is stored in variable __BANKN[0;2]. Sample: ```.org [0x8000]``` or ```.org __BANKN0```.
 
-The semicolon symbol is used for commenting code. All line after a semicolon is ignored by the interpreter.
+The semicolon symbol is used for commenting code. All line after a semicolon is ignored by the parser.
 
 ### Examples
 
