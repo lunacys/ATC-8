@@ -69,7 +69,7 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 | pc (programm counter) | gets the current instruction's index | Internal: RW, External: R |
 | dp (debug pointer )| contains pointer to the next debug point in a program | Internal: RW, External: NONE |
 
-Every register is 2 bytes long.
+Every register is 2 bytes (16 bits) long.
 
 ## Assembly Language Documentation
 
