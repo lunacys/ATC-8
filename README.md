@@ -13,7 +13,7 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 **ATC-8** has all the components that a video game console needs and the console is comporable to NES:
 
 - **CPU:** 16-bit ATC-1801 (yyMm, yy - last two numbers of the current year, M - major version, m - minor version). The CPU uses AASM.
-- **RAM:** 32KB (256Kb), 32KB video RAM (including sprite bank)
+- **RAM:** 32KB (256Kb), 32KB video RAM (including sprite bank) ([0x0000] - [0x3FFFF])
 - **Display:** 256x256 pixels
 - **Colors:** 64 colors palette
 - **Cartridge size:** 32K (16K for sprites, 16K for code & other data)
@@ -24,7 +24,9 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 - **Internal memory:** 16KB for OS and game saves
 - **Code:** AASM Assembly Language
 
-**Colors** have alpha, red, green and blue channels. Colors can be defined by using hexadecimal notation in format **RRGGBBAA**, where A - alpha channel (FF - completely transparent, 0 - vice versa), R - red channel, G - green channel, B - blue channel. Color palette can contain *any* combinations of the channel, but its amount is limited to 64. If a color is getting out of bounds, it replaces the first color.
+**RAM** and **Video RAM** can be changed at any time. The available methods of doing that are listed below.
+
+**Colors** have alpha, red, green and blue channels. Colors can be defined by using hexadecimal notation in format **RRGGBBAA**, where A - alpha channel (FF - completely transparent, 0 - vice versa), R - red channel, G - green channel, B - blue channel. Color palette can contain *any* combinations of the channel, but its amount is limited to 64. If a color is getting out of bounds, it replaces the first color. Colors are stored in the **Video RAM** at range [0x0000]-[0x0080].
 
 16K of **sprites** can be manually replaced by any other data using configuration.
 
@@ -56,7 +58,7 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 
 **ATC-1801** is a CPU that is used by the ATC-8. It is significantly easier to program in that is a real assembly language (line the one for i386 CPU), but in other way it may be harder to use than some habitual high-level languages like Java or C#. 
 
-### Registers table:
+### Registers table
 
 | Register(s) | Description | Access Rights |
 | --- | --- | --- |
@@ -73,21 +75,31 @@ Every register is 2 bytes (16 bits) long.
 
 ## Assembly Language Documentation
 
-The registers can store any data or addresses. If you want to store an address in the memory, you should use square brackets and place your address within it, for example: ```mov 15, [0x0100]``` writes the number *15* into the *0x0100* memory position. You can use decimal, heximal or binary numbers:
+The registers can store any data or addresses.
+If you want to store an address in the memory, you should use square brackets and place your address within it,
+for example: ```mov 15, [0x0100]``` writes the number *15* into the *0x0100* memory position.
+You can use decimal, heximal or binary numbers:
 
 - ```0b010101``` - binary
 - ```0x00ff``` - heximal
 - ```129``` - decimal
 
-Every memory addres has 16 bit offset, that means when you're getting and writting to address [0x100] value 0b1111000000000001 (16 bit), the memory at position [0x100] will have this data:
-```
+Every memory addres has 16 bit offset,
+that means when you're getting and writting to address [0x100] value 0b1111000000000001 (16 bit),
+the memory at position [0x100] will have this data:
+
+```none
 Hexadecimal version:
 _________________
 _0_|_F_0_0_1_|_0_
    |         |
 [0x100]   [0x101]
 ```
-Normally the primary data types are **WORD** (2 bytes long) and **STR** (first byte is size of the string, next N bytes are ASCII characters 1 byte long), but user can define their own type using specs that are listed below.
+
+The behavior of overflowing depends on ASM configuration. This is listed below.
+
+Normally the primary data types are **WORD** (2 bytes long) and **STR** (first byte is size of the string, next N bytes are ASCII characters 1 byte long),
+but user can define their own type using specs that are listed below.
 
 There are three banks of data used in ATC:
 
@@ -106,7 +118,7 @@ If you want to transfer execution to the bank order, use ```.org <bank_pos>```. 
 
 The semicolon symbol is used for commenting code. All line after a semicolon is ignored by the parser.
 
-### Examples
+### Bank usage examples
 
 #### Bank 0
 
@@ -199,7 +211,7 @@ dvar 0        ; location of VBlank interrupt
 | `0x36` | `jne a` | transfers execution to label **a** if **JD!=0** |
 | `0x37` | `jti a` | transfers execution to index **a**. **a** can be either negative or positive. if **a** is 0, do nothing |
 
-### Examples
+### Code Examples
 
 #### Drawing a blue backgroung and a sprite moving to the right
 
@@ -230,11 +242,11 @@ begin:
     jnz kp, end         ; if any key is down (kp register is not zero), end the program 
     .move myspr, x, y
     jmp drawbkg
-    .draw myspr, x, y    
+    .draw myspr, x, y
     jmp begin           ; jump at the begin
 
 drawbkg:
-    .draw 
+    .draw
 
     jnz drawbkg
 
