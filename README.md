@@ -357,43 +357,52 @@ dvar 0        ; location of VBlank interrupt
 
 ### Code Examples
 
-#### Drawing a blue backgroung and a sprite moving to the right
+#### A simple "game" example
+
+This is complete example of making a simple game, where you can control a 8x8 square.
+
+Used concepts:
+
+ - Language basics
+ - Using standard library
+ - Custom types
+ - Debugging
+ - Using images
+ - Using gamepad controls (in this case they are mapped to keyboard)
+ - Complex language constructions
 
 ```nasm
+.inclib "std"
+.inclib "std/ge"
+.inclib "std/types"
+
 .bank 2
 .org 0x0000
 
+; included data goes to Video RAM
+.incbin "main.bkg"      ; include background data
 .incbin "main.spr"      ; include sprite data
 
-; let's say that the sprite is placed at [0,0] and its size is 8x8 pixels
+; defining raw sprite data wrapper
+; every sprite is 8x8 pixels wide
+; every pixel is 16 bits (4 byte) long
+; so the size of the SPRITE is 8*8*4=1024 bytes per sprite EXCLUDING properties
+; there can be maximum of 128 sprites
+.typedef SPRITE
+    define DATASIZE, 1024
+    
+    prop X, (WORD)
+    rigths X, RW
+    prop Y, (WORD)
+    rights Y, RW
 
-.bank 0                 ; set the current bank to 0
-.org 0x8000             ; goto location 0x8000
+    use MEMMAP, DEFAULT
+    use REGMAP, NONE
+.end
 
-; now writing the game code
+.bank 0     ; set the current bank to 0
+.org 0x8000 ; goto location 0x8000
 
-dvar myspr, [0x0000]             ; allocate memory for the sprite (dvar - define variable)
-dvar bkg, 0x0000FF    ; set the background color as blue
-dvar x, 0x0000
-dvar y, 0x0000
-dvar proceed, 0x0001
-dvar reset, 0x0000
 
-mov proceed, ax
-mov reset, bx
 
-begin:
-    jnz kp, end         ; if any key is down (kp register is not zero), end the program 
-    .move myspr, x, y
-    jmp drawbkg
-    .draw myspr, x, y
-    jmp begin           ; jump at the begin
-
-drawbkg:
-    .draw
-
-    jnz drawbkg
-
-end:
-    .dbug "exiting"
 ```
