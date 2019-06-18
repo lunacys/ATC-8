@@ -222,7 +222,7 @@ set __BANKN1, [0xFFFF]
 set __BANKN2, [0x0000]
 ```
 
-If you want to transfer execution to the bank order, use ```.org <bank_pos>```. The bank position is stored in variable __BANKN[0;2]. Sample: ```.org [0x8000]``` or ```.org __BANKN0```.
+If you want to transfer execution to the bank order, use `.org <bank_pos>`. The bank position is stored in variable \_\_BANKN[0;2]. Sample: `.org [0x8000]` or `.org __BANKN0`.
 
 The semicolon symbol is used for commenting code. All line after a semicolon is ignored by the parser.
 
@@ -302,7 +302,7 @@ dvar 0        ; location of VBlank interrupt
 | `0x01` | `set a, b` | sets **a** to **b** |
 | `0x02` | `add a, b` | sets **a** to **a + b**, sets **EX** to `0x0001` if there's an overflow, `0x0` otherwise |
 | `0x03` | `sub a, b` | sets **a** to **a - b,** sets **EX** to `0xffff` if there's and underflow, `0x0` otherwise |
-| `0x04` | `mul a, b` | sets **a** to **a * b**, sets **EX** to `((a*b)>>16)&0xffff` (treats **a**, **b** as unsigned)|
+| `0x04` | `mul a, b` | sets **a** to **a \* b**, sets **EX** to `((a*b)>>16)&0xffff` (treats **a**, **b** as unsigned)|
 | `0x05` | `mli a, b` | like `mul`, but treat **a**, **b** as signed
 | `0x06` | `div a, b` | sets **a** to **a/b**, sets **EX** to `((a<<16)/b)&0xffff`. if **b==0**, sets **a** and **EX** to 0 instead (treats **a, b** as unsigned)
 | `0x07` | `dvi a, b` | like `div`, but treat **a, b** as signed. rounds towards 0 |
