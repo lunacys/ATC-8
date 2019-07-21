@@ -13,6 +13,6 @@
         Operator = 7,
         Register = 8,
         DebugPoint = 9,
-        NewLine = 10
+        NewLine = 10,
     }
 }

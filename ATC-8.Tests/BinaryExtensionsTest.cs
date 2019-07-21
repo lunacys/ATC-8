@@ -41,9 +41,11 @@ namespace ATC_8.Tests
             string str1 = "test string";
             var str1Arr = str1.ToWordArray();
 
-            for (int i = 0; i < str1.Length; i++)
+            var size = str1Arr[0];
+
+            for (int i = 1; i < size; i++)
             {
-                Assert.That((short)str1[i] == str1Arr[i]);
+                Assert.That((short)str1[i - 1] == str1Arr[i]);
             }
 
         }

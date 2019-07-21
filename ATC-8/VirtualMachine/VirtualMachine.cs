@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using ATC8.Cpu;
 using ATC8.Ram;
 using ATC8.VirtualMachine.Lexer.Tokens;
@@ -16,27 +14,27 @@ namespace ATC8.VirtualMachine
         private int StackSize => _bytecode.Length;
         private Stack<Word> _stack;
         private Word[] _bytecode;
-        private Instructions _nextInstruction;
 
         private CpuBase _cpu;
         private RamBase _ram;
 
-        private Instructions _lastOpcode;
+        private LabelStorage _labelStorage;
 
-        private Dictionary<string, int> _labelDictionary;
+        private List<int> _debugPoints;
 
         private OpcodeHandler _opcodeHandler;
 
         public VirtualMachine()
         {
-            //_stackSize = 0;
-            //_stack = new int[MaxStackSize];
             _stack = new Stack<Word>(MaxStackSize);
 
             _cpu = new CpuBase(null);
             _ram = new RamBase(262144); // 32KB
-            _opcodeHandler = new OpcodeHandler(_cpu);
-            _labelDictionary = new Dictionary<string, int>();
+
+            _labelStorage = new LabelStorage();
+            _opcodeHandler = new OpcodeHandler(_cpu, _labelStorage);
+
+            _debugPoints = new List<int>();
 
             Console.WriteLine($"CPU: \n{_cpu}");
         }
@@ -47,210 +45,127 @@ namespace ATC8.VirtualMachine
 
             for (_currentPosition = 0; _currentPosition < _bytecode.Length; _currentPosition++)
             {
-                TokenType tt = (TokenType)_bytecode[_currentPosition++].Value;
+                TokenType tt = ReadCurrentTokenType();
 
                 if (tt == TokenType.Opcode)
                 {
                     var opcode = (Instructions) _bytecode[_currentPosition].Value;
+
                     Console.WriteLine(" Got an opcode: " + opcode);
 
                     HandleOpcode(opcode);
-                    //_lastOpcode = opcode;
                 }
                 else if (tt == TokenType.ExtensionOpcode)
                 {
-                    var size = _bytecode[_currentPosition].Value;
-                    string resultStr = "";
+                    string resultStr = ReadString();
 
-                    for (int i = 0; i < size; i++)
-                    {
-                        char ch = (char)_bytecode[++_currentPosition].Value;
-                        resultStr += ch;
-                    }
+                    Console.WriteLine($" Got an extension opcode (size: {resultStr.Length}): " + resultStr);
 
-                    Console.WriteLine($" Got an extension opcode (size: {size}): " + resultStr);
+                    HandleExtensionOpcode(resultStr);
                 }
                 else if (tt == TokenType.Label)
                 {
-                    var size = _bytecode[_currentPosition].Value;
-                    string resultStr = "";
+                    string resultStr = ReadString();
 
-                    for (int i = 0; i < size; i++)
-                    {
-                        char ch = (char) _bytecode[++_currentPosition].Value;
-                        resultStr += ch;
-                    }
+                    Console.WriteLine($" Got a label (size: {resultStr.Length}): " + resultStr);
 
-                    _labelDictionary[resultStr] = _currentPosition;
-
-                    Console.WriteLine($" Got a label (size: {size}): " + resultStr);
+                    HandleLabel(resultStr);
                 }
                 else if (tt == TokenType.DebugPoint)
                 {
+                    Console.WriteLine($" Got a debug point at position " + _currentPosition);
 
+                    HandleDebugPoint();
+                }
+                else
+                {
+                    throw new InvalidVmOperationException($"Invalid token type '{tt}' at position {_currentPosition}.");
                 }
             }
-        }
-
-        private void Process()
-        {
-            Console.WriteLine("Processing Line");
-
-            if (_nextInstruction == Instructions.Dvr)
-            {
-                
-
-            }
-        }
-
-        private string FromWordString(Word size, Word[] bytes)
-        { 
-            var str = new Word[size];
-            for (int i = 0; i < size; i++)
-                str[i] = bytes[i];
-            return str.FromWordArray();
         }
 
         private void HandleOpcode(Instructions opcode)
         {
+            var queue = ReadLine(new[] {new Word((short)opcode)});
+
+            _opcodeHandler.Handle(queue);
+        }
+
+        private void HandleExtensionOpcode(string opcode)
+        {
+            var queue = ReadLine(opcode.ToWordArray());
+
+            _opcodeHandler.HandleExtension(queue);
+        }
+
+        private void HandleLabel(string label)
+        {
+            _labelStorage[label] = _currentPosition;
+        }
+
+        private void HandleDebugPoint()
+        {
+            _debugPoints.Add(_currentPosition);
+
+            throw new NotImplementedException();
+        }
+
+        private TokenType ReadCurrentTokenType()
+        {
+            return (TokenType)_bytecode[_currentPosition++].Value;
+        }
+
+        private string ReadString()
+        {
+            var size = _bytecode[++_currentPosition].Value;
+            string resultStr = "";
+
+            for (int i = 0; i < size; i++)
+            {
+                char ch = (char)_bytecode[++_currentPosition].Value;
+                resultStr += ch;
+            }
+
+            return resultStr;
+        }
+
+        private Queue<Word> ReadLine(Word[] beginData)
+        {
             Queue<Word> temp = new Queue<Word>();
-            temp.Enqueue((short)opcode);
-            
-            while (true)//((TokenType) _bytecode[++_currentPosition].Value != TokenType.NewLine)
+            temp.EnqueueWordArray(beginData);
+
+            while (true)
             {
                 var currentWord = _bytecode[++_currentPosition];
 
-                if ((TokenType) currentWord.Value == TokenType.String)
+                if ((TokenType)currentWord.Value == TokenType.Delimiter)
                 {
+                    // Skip the delimiter as we don't need it anyways
+                    var delimiter = _bytecode[_currentPosition + 1];
 
-                }
-                else if ((TokenType)currentWord.Value == TokenType.Label)
-                {
-
+                    if (delimiter == ',') // Skip commas, pass the rest
+                    {
+                        _currentPosition++;
+                        continue;
+                    }
                 }
                 else if ((TokenType)currentWord.Value == TokenType.Identifier)
                 {
-
+                    // TODO: Find memory address value and pass it as identifier
                 }
-                else if ((TokenType) currentWord.Value == TokenType.NewLine)
+                else if ((TokenType)currentWord.Value == TokenType.NewLine)
                 {
+                    // New line is the end of the current instruction
                     break;
                 }
-                else if ((TokenType) currentWord.Value == TokenType.Delimiter)
-                {
-                    // Skip the delimiter as we don't need it anyways
-                    _currentPosition++; // 'Eat' delimiter value
-                }
-                else
-                {
-                    var value = _bytecode[++_currentPosition];
-                    Console.WriteLine($"Pushing: type: {(TokenType)currentWord.Value}, value: {value}");
-                    temp.Enqueue(currentWord);
-                    temp.Enqueue(value);
-                }
+
+                temp.Enqueue(currentWord);
+                var value = _bytecode[++_currentPosition];
+                Console.WriteLine($"Pushing: type: {(TokenType)currentWord.Value}, value: {value}");
+                temp.Enqueue(value);
             }
 
-            _opcodeHandler.Handle(temp);
-            /*int expectedParamsCount = 0;
-
-            if (opcode == Instructions.Add)
-            {
-                expectedParamsCount = 2;
-                Console.WriteLine($"char 44: " + (char)44);
-                TokenType firstParamType = (TokenType) _bytecode[++_currentPosition].Value;
-                RegisterName regName;
-
-                if (firstParamType == TokenType.Register)
-                {
-                    regName = (RegisterName)_bytecode[++_currentPosition].Value;
-                    //Register reg = _cpu[regName];
-                    Console.WriteLine("RegName is " + regName);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid first param type: " + firstParamType);
-                    return;
-                }
-
-                if ((TokenType) _bytecode[++_currentPosition].Value != TokenType.Delimiter &&
-                    (char) _bytecode[++_currentPosition].Value != ',')
-                {
-                    Console.WriteLine("Incorrect syntax");
-                    return;
-                }
-
-                if ((char) _bytecode[++_currentPosition].Value != ',')
-                {
-                    return;
-                }
-
-                TokenType secondParamType = (TokenType) _bytecode[++_currentPosition].Value;
-
-                if (secondParamType == TokenType.Integer)
-                {
-                    var value = _bytecode[++_currentPosition].Value;
-                    Console.WriteLine("Second param is " + value);
-                    _cpu[regName] += value;
-                }
-
-                Console.WriteLine($"CPU:");
-                Console.WriteLine($"{_cpu}");
-            }*/
-        }
-
-        private void HandleIdentifier(string identifier)
-        {
-            Console.WriteLine($"Got an identifier: {identifier}");
-            //throw new NotImplementedException();
-        }
-
-        private void HandleInteger(Word integer)
-        {
-            Console.WriteLine($"Got an integer: {integer}");
-            _stack.Push(integer);
-        }
-
-        private void HandleString(string str)
-        {
-            Console.WriteLine($"Got a string: {str}");
-            //throw new NotImplementedException();
-        }
-
-        private void HandleExtOpcode(string opcode)
-        {
-            Console.WriteLine($"Got an extension opcode: {opcode}");
-            if (opcode == "dbug")
-                Console.WriteLine("Debug string");
-            //throw new NotImplementedException();
-        }
-
-        private void HandleDelimiter(char delimiter)
-        {
-            Console.WriteLine($"Got a delimiter: {delimiter}");
-            //throw new NotImplementedException();
-        }
-
-        private void HandleLabel(string label, Word position)
-        {
-            Console.WriteLine($"Got a label: {label} at position {position}");
-            //throw new NotImplementedException();
-        }
-
-        private void HandleOperator(char op)
-        {
-            Console.WriteLine($"Got an operator: {op}");
-            //throw new NotImplementedException();
-        }
-
-        private void HandleRegister(RegisterName register)
-        {
-            Console.WriteLine($"Got a register: {register}");
-            //throw new NotImplementedException();
-        }
-
-        private void HandleDebugPoint(Word position)
-        {
-            throw new NotImplementedException();
+            return temp;
         }
     }
 }

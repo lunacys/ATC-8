@@ -8,10 +8,12 @@ namespace ATC8.VirtualMachine
     public class OpcodeHandler
     {
         public CpuBase Cpu { get; }
+        public LabelStorage LabelStorage { get; }
 
-        public OpcodeHandler(CpuBase cpu)
+        public OpcodeHandler(CpuBase cpu, LabelStorage labelStorage)
         {
             Cpu = cpu;
+            LabelStorage = labelStorage;
         }
 
         public void Handle(Queue<Word> data)
@@ -40,6 +42,24 @@ namespace ATC8.VirtualMachine
                     Console.WriteLine($"Unknown opcode: " + opcode);
                     break;
             }
+
+            if (data.Count != 0)
+                throw new InvalidVmOperationException($"Got more parameters than expected: {data.Count / 2} more left ({data.Count} words total)");
+        }
+
+        public void HandleExtension(Queue<Word> data)
+        {
+            var size = data.Dequeue().Value;
+
+            string str = "";
+
+            for (int i = 0; i < size; i++)
+            {
+                str += (char) data.Dequeue().Value;
+            }
+
+            Console.WriteLine($"To handle...");
+            Console.WriteLine($"ext opcode is: " + str);
         }
     }
 }

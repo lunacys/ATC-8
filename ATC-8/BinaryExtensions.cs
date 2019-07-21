@@ -33,11 +33,12 @@ namespace ATC8
 
         public static Word[] ToWordArray(this string value)
         {
-            Word[] bytecode = new Word[value.Length];
+            Word[] bytecode = new Word[value.Length + 1];
+            bytecode[0] = value.Length;
 
-            for (int i = 0; i < value.Length; i++)
+            for (int i = 1; i <= value.Length; i++)
             {
-                bytecode[i] = new Word((short)value[i]);
+                bytecode[i] = new Word((short)value[i - 1]);
             }
 
             return bytecode;
@@ -46,7 +47,9 @@ namespace ATC8
         public static string FromWordArray(this Word[] value)
         {
             string res = "";
-            for (int i = 0; i < value.Length; i++)
+            var size = value[0];
+
+            for (int i = 1; i <= size.Value; i++)
             {
                 res += (char)value[i];
             }
