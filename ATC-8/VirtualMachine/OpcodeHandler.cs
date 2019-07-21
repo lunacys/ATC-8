@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ATC8.Cpu;
+using ATC8.Logging;
 using ATC8.VirtualMachine.Lexer.Tokens;
 
 namespace ATC8.VirtualMachine
@@ -9,6 +10,8 @@ namespace ATC8.VirtualMachine
     {
         public CpuBase Cpu { get; }
         public LabelStorage LabelStorage { get; }
+
+        private LoggerBase _logger => LoggerFactory.Get("OpcodeHandler");
 
         public OpcodeHandler(CpuBase cpu, LabelStorage labelStorage)
         {
@@ -33,13 +36,13 @@ namespace ATC8.VirtualMachine
                         if (secondParamType == TokenType.Integer)
                         {
                             Cpu[(RegisterName) firstParam.Value] += secondParam;
-                            Console.WriteLine($" ADDING: REGISTER {(RegisterName)firstParam.Value} + {secondParam}");
+                            _logger.Debug($" ADDING: REGISTER {(RegisterName)firstParam.Value} + {secondParam}");
                         }
                     }
 
                     break;
                 default:
-                    Console.WriteLine($"Unknown opcode: " + opcode);
+                    _logger.Debug($"Unknown opcode: " + opcode);
                     break;
             }
 
@@ -58,8 +61,13 @@ namespace ATC8.VirtualMachine
                 str += (char) data.Dequeue().Value;
             }
 
-            Console.WriteLine($"To handle...");
-            Console.WriteLine($"ext opcode is: " + str);
+            _logger.Debug($"  To handle...");
+            _logger.Debug($"ext opcode is: " + str);
+
+            if (str == "dumpcpu")
+            {
+                Console.WriteLine($"{Cpu}");
+            }
         }
     }
 }

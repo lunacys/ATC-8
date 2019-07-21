@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using ATC8.Cpu;
+using ATC8.Logging;
 using ATC8.VirtualMachine;
 using ATC8.VirtualMachine.Lexer.Tokens;
 
@@ -8,11 +9,13 @@ namespace ATC8.Interpreter
 {
     class Program
     {
+        private static LoggerBase _logger => LoggerFactory.Get("Interpreter.Program");
+
         static void Main(string[] args)
         {
             Tests();
 
-            Console.WriteLine("Run your ATC-8 Assembly commands: ");
+            _logger.Info("Run your ATC-8 Assembly commands: ");
 
             try
             {
@@ -24,7 +27,7 @@ namespace ATC8.Interpreter
                     var currLine = Console.ReadLine();
                     if (string.IsNullOrEmpty(currLine))
                     {
-                        Console.WriteLine("The line is empty");
+                        _logger.Warning("The line is empty");
                         continue;
                     }
 
@@ -48,7 +51,7 @@ namespace ATC8.Interpreter
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
+                        _logger.Error(e.Message);
                         continue;
                     }
                     
@@ -69,15 +72,13 @@ namespace ATC8.Interpreter
                         Console.WriteLine("\n");
                     }
 
-                    Console.WriteLine("Interpreting: ");
-
                     try
                     {
                         vm.Interpret(bytecode);
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
+                        _logger.Error(e.Message);
                     }
 
                     Console.WriteLine();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ATC8.Cpu;
+using ATC8.Logging;
 using ATC8.Ram;
 using ATC8.VirtualMachine.Lexer.Tokens;
 
@@ -24,6 +25,8 @@ namespace ATC8.VirtualMachine
 
         private OpcodeHandler _opcodeHandler;
 
+        private LoggerBase _logger => LoggerFactory.Get("VirtualMachine");
+
         public VirtualMachine()
         {
             _stack = new Stack<Word>(MaxStackSize);
@@ -43,6 +46,8 @@ namespace ATC8.VirtualMachine
         {
             _bytecode = bytecode;
 
+            _logger.Debug($"Interpreting bytecode (size: {_bytecode.Length}):");
+
             for (_currentPosition = 0; _currentPosition < _bytecode.Length; _currentPosition++)
             {
                 TokenType tt = ReadCurrentTokenType();
@@ -51,7 +56,7 @@ namespace ATC8.VirtualMachine
                 {
                     var opcode = (Instructions) _bytecode[_currentPosition].Value;
 
-                    Console.WriteLine(" Got an opcode: " + opcode);
+                    _logger.Debug(" Got an opcode: " + opcode);
 
                     HandleOpcode(opcode);
                 }
@@ -59,7 +64,7 @@ namespace ATC8.VirtualMachine
                 {
                     string resultStr = ReadString();
 
-                    Console.WriteLine($" Got an extension opcode (size: {resultStr.Length}): " + resultStr);
+                    _logger.Debug($" Got an extension opcode (size: {resultStr.Length}): " + resultStr);
 
                     HandleExtensionOpcode(resultStr);
                 }
@@ -67,13 +72,13 @@ namespace ATC8.VirtualMachine
                 {
                     string resultStr = ReadString();
 
-                    Console.WriteLine($" Got a label (size: {resultStr.Length}): " + resultStr);
+                    _logger.Debug($" Got a label (size: {resultStr.Length}): " + resultStr);
 
                     HandleLabel(resultStr);
                 }
                 else if (tt == TokenType.DebugPoint)
                 {
-                    Console.WriteLine($" Got a debug point at position " + _currentPosition);
+                    _logger.Debug($" Got a debug point at position " + _currentPosition);
 
                     HandleDebugPoint();
                 }
@@ -161,7 +166,9 @@ namespace ATC8.VirtualMachine
 
                 temp.Enqueue(currentWord);
                 var value = _bytecode[++_currentPosition];
-                Console.WriteLine($"Pushing: type: {(TokenType)currentWord.Value}, value: {value}");
+
+                _logger.Debug($"Pushing: type: {(TokenType)currentWord.Value}, value: {value}");
+
                 temp.Enqueue(value);
             }
 
