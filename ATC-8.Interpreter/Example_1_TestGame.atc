@@ -1,41 +1,103 @@
-; including standard, development and game framework libraries
-.include "atc.std.lib" 
-.include "atc.std.dev.lib"
-.include "atc.game.lib"
+; this example must be interpetable in the first version!
+; including std library and game library
+inclib "lib.std"
+inclib "lib.ge"            ; stands for "game engine"
 
-section TestGame ; TestGame section
+set __BANKN0, [0x9000]
+set __BANKN1, [0xFFFF]
+set __BANKN2, [0x0000]
 
-    obj Hero
-        let mysprite, (call .atc.game.loadsprite "myspr.spr")
-        let posX, 0
-        let posY, 0
+.bank 2
+.org 0x0000
 
-        def move(x, y) ; defining a move extension opcode for obj Hero 
-            add posX, x ; add value of ax regster to X
-            add posY, y ; add value of bx register to Y
-        end
+; included data goes to Video RAM
+.incbin "main.bkg"      ; include background data
+.incbin "main.spr"      ; include sprite data
 
-        def draw
-            .atc.game.drawsprite mysprite, x, y
-        end
+; defining raw sprite data wrapper
+; every sprite is 8x8 pixels wide
+; every pixel is 16 bits (4 byte) long
+; so the size of the SPRITE is 8*8*4=1024 bytes per sprite EXCLUDING properties
+; there can be maximum of 128 sprites
+.typedef SPRITE
+    define DATASIZE, 1024
+    
+    prop X, (WORD)
+    prop Y, (WORD)
+
+    use MEMMAP, DEFAULT
+    use REGMAP, NONE
+.end
+
+.bank 0     ; set the current bank to 0
+.org 0x8000 ; goto location 0x8000 (program code)
+
+module example_1
+
+    init:                        ; initialization
+        dvar playerTexture, 0x0000:$TEXTURE_SIZE    ; define player texture which is the first bytes (from 0x0000 to texture data size)
+        dvar playerPosX, 0       ; define player position X coordinate
+        dvar playerPosY, 0       ; Y coordinate
+        dvar playerSpeed, 4      ;
+        dvar playerAngle, 0      ;
+        dvar key, 0              ; current key
+    end                          ; transfer execution back to calling label
+
+    exit:
+        jmp $__END__            ; jumping to the end of the program (the next line after the last instruction)
     end
 
-    let hero, $Hero
-    
-    let proceed, 1    
+    onkeydown:                  ; lablel to jump on in case of keyboard key press
+        pop key                 ; get keyboard key data from the stack
+                                ; the available keys are listed in docs
+                                ; we'll be using the following keys:
+                                ; - $K_DOWN - down arrow
+                                ; - $K_UP - up arrow
+                                ; - $K_LEFT - left arrow
+                                ; - $K_RIGHT - right arrow
+                                ; - $K_ESC - escape key (for quitting)
+        ife key, $K_ESC
+            jmp exit
+        ife key, $K_DOWN     
+            add playerPosY, playerSpeed   ; move player down 
+        ife key, $K_UP
+            sub playerPosY, playerSpeed   ; move player up
+        ife key, $K_LEFT
+            sub playerPosX, playerSpeed   ; move player left
+        ife key, $K_RIGHT
+            add playerPosX, playerSpeed   ; move player right
+    end          
 
-    mainloop: 
-        jne ex, end ; if ex register is not zero, end the game 
-        
-        $Hero.move 2, 1
+    update:
+        add angle, 1
+    end
 
-        $Hero.draw
+    draw:
+        ; .draw opcode takes the following data from the stack:
+        ; 1) X coordinate
+        ; 2) Y coordinate
+        ; .draw2:
+        ; 1) X
+        ; 2) Y
+        ; 3) Angle in degrees
+        push playerPositionX
+        push playerPositionY
+        push playerAngle
+        .draw playerTexture
+    end
 
-        loop mainloop
+    main:                       ; main label where execution starts at, calls externally
+        jmp init
+        set playerPosX 32
+        set playerPosY 32
 
-    end: 
-        .atc.std.end "bye!"
-end ; .section TestGame
+        set #KEYDOWN, &onkeydown ; setting keydown callback
+        loop
+            jmp update
+            jmp draw
+        end
+end                             ; module end
+
 
 
 
