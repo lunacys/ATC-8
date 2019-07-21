@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 
 namespace ATC8
@@ -7,22 +8,22 @@ namespace ATC8
     {
         public static string ToBinaryString(this byte value)
         {
-            return Convert.ToString(value, 2).PadLeft(8, '0');
+            return Convert.ToString(value, 2).PadLeft(sizeof(byte) * 8, '0');
         }
 
         public static string ToBinaryString(this short value)
         {
-            return Convert.ToString(value, 2).PadLeft(8, '0');
+            return Convert.ToString(value, 2).PadLeft(sizeof(short) * 8, '0');
         }
 
         public static string ToHexString(this byte value)
         {
-            return Convert.ToString(value, 16).PadLeft(2, '0');
+            return Convert.ToString(value, 16).PadLeft(sizeof(byte) * 8, '0').ToUpper(CultureInfo.InvariantCulture);
         }
 
         public static string ToHexString(this short value)
         {
-            return Convert.ToString(value, 16).PadLeft(4, '0').Insert(2, " ");
+            return Convert.ToString(value, 16).PadLeft(sizeof(short) * 8, '0').Insert(2, " ").ToUpper(CultureInfo.InvariantCulture);
         }
 
         public static byte FromBinaryString(this string value)

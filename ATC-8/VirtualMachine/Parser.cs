@@ -58,7 +58,7 @@ namespace ATC8.VirtualMachine
             {
                 GetNextToken();
 
-                // current token type can be only extension opcode, opcode or label,
+                // current token type can be only extension opcode, opcode, label or debug point,
                 // and we're moving through the tokens while proceeding those three
                 // main token types, so if we're getting something else besides
                 // those three types, we throw an exception
