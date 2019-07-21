@@ -113,8 +113,9 @@ namespace ATC8.VirtualMachine
 
         private void HandleOpcode(Instructions opcode)
         {
-            Stack<Word> temp = new Stack<Word>();
-
+            Queue<Word> temp = new Queue<Word>();
+            temp.Enqueue((short)opcode);
+            
             while (true)//((TokenType) _bytecode[++_currentPosition].Value != TokenType.NewLine)
             {
                 var currentWord = _bytecode[++_currentPosition];
@@ -144,7 +145,8 @@ namespace ATC8.VirtualMachine
                 {
                     var value = _bytecode[++_currentPosition];
                     Console.WriteLine($"Pushing: type: {(TokenType)currentWord.Value}, value: {value}");
-                    temp.Push(value);
+                    temp.Enqueue(currentWord);
+                    temp.Enqueue(value);
                 }
             }
 

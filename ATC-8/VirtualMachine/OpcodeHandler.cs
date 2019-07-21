@@ -14,17 +14,17 @@ namespace ATC8.VirtualMachine
             Cpu = cpu;
         }
 
-        public void Handle(Stack<Word> data)
+        public void Handle(Queue<Word> data)
         {
-            var opcode = (Instructions) data.Pop().Value;
+            var opcode = (Instructions) data.Dequeue().Value;
 
             switch (opcode)
             {
                 case Instructions.Add:
-                    var secondParam = data.Pop();
-                    var secondParamType = (TokenType)data.Pop().Value;
-                    var firstParam = data.Pop();
-                    var firstParamType = (TokenType)data.Pop().Value;
+                    var firstParamType = (TokenType)data.Dequeue().Value;
+                    var firstParam = data.Dequeue();
+                    var secondParamType = (TokenType)data.Dequeue().Value;
+                    var secondParam = data.Dequeue();
 
                     if (firstParamType == TokenType.Register)
                     {
