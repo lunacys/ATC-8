@@ -8,6 +8,8 @@ All the projects are written in C# using .NET Core 2.0. Also GUI module uses Mon
 
 *Please note: I do not understand assembly languages perfectly, moreover I have little knowledge about them, so I'm writting ATC-8's CPU assembly language, specification and documentation only using my experience in some OOP languages like C#, scripting languages like Lua and functional languages like Scala or F#. Also into that experience bag goes ASM lessons from my university.*
 
+*Based on this, this repo is mostly for educational purposes*
+
 ## Project structure
 
 **ATC-8** has the following project structure:
